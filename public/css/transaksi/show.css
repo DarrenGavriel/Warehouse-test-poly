@@ -1,0 +1,186 @@
+body {
+    background-color: #f4f7f6;
+    font-family: 'Inter', sans-serif;
+    color: #334155;
+}
+.card {
+    border: none;
+    border-radius: 12px;
+    overflow: hidden;
+}
+.table thead {
+    background-color: #f8fafc;
+}
+.table th {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.025em;
+    color: #64748b;
+    padding: 1rem;
+}
+.table td {
+    padding: 1rem;
+    vertical-align: middle;
+}
+/* Custom Pagination Styling */
+.pagination-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+.page-link {
+    border-radius: 6px;
+    margin: 0 2px;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+}
+.page-item.active .page-link {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+.dropdown-lokasi {
+    box-shadow: 0 5px 15px rgb(0 0 0 / 15%);
+    border-radius: 5px;
+    max-height: 200px;
+    overflow: auto;
+    display: none;
+    position: absolute;
+    z-index: 1;
+    background-color: white;
+    width: 100%;
+}
+.dropdown-lokasi.active{
+    display: block;
+}
+.dropdown-lokasi .search-lokasi{
+    padding: 5px;
+    border-bottom: 1px solid rgb(204, 204, 204);
+}
+.dropdown-lokasi ul li {
+    font-size: 0.8rem;
+    padding: 8px 10px;
+}
+.dropdown-lokasi ul li:hover {
+    background-color: rgb(240, 240, 240);
+}
+.dropdown-lokasi ul li.active {
+    background-color: rgb(220, 220, 220);
+}
+.dropdown-lokasi ul li.read-only {
+    pointer-events: none;
+    color: rgb(150, 150, 150);
+}
+.dropdown-item .lokasi-kode {
+    display: block;
+    font-weight: 500;
+}
+.dropdown-item .lokasi-nama {
+    display: block;
+    font-size: 0.7rem;
+    color: rgb(120, 120, 120);
+    margin-top: 2px;
+}
+
+/* Modal Create Dropdown Styles */
+.select-lokasi-modal,
+.select-barang-modal,
+.select-program-modal {
+    cursor: pointer;
+    margin-bottom: 5px;
+}
+
+.select-lokasi-modal input,
+.select-barang-modal input,
+.select-program-modal input {
+    cursor: pointer;
+    background-color: white;
+}
+
+.dropdown-lokasi-modal,
+.dropdown-barang-modal,
+.dropdown-program-modal {
+    box-shadow: 0 5px 15px rgb(0 0 0 / 15%);
+    border-radius: 5px;
+    max-height: 200px;
+    overflow: auto;
+    display: none;
+    position: relative;
+    z-index: 10;
+    background-color: white;
+    width: 100%;
+    margin-top: 5px;
+}
+
+.dropdown-lokasi-modal.active,
+.dropdown-barang-modal.active,
+.dropdown-program-modal.active {
+    display: block;
+}
+
+.dropdown-lokasi-modal .search-lokasi,
+.dropdown-barang-modal .search-barang,
+.dropdown-program-modal .search-program {
+    padding: 8px;
+    border-bottom: 1px solid rgb(204, 204, 204);
+    position: sticky;
+    top: 0;
+    background-color: white;
+    z-index: 11;
+}
+
+.dropdown-lokasi-modal .search-lokasi input[type="text"],
+.dropdown-barang-modal .search-barang input[type="text"],
+.dropdown-program-modal .search-program input[type="text"] {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.dropdown-lokasi-modal ul,
+.dropdown-barang-modal ul,
+.dropdown-program-modal ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.dropdown-lokasi-modal ul li,
+.dropdown-barang-modal ul li,
+.dropdown-program-modal ul li {
+    font-size: 0.8rem;
+    padding: 8px 10px;
+    cursor: pointer;
+}
+
+.dropdown-lokasi-modal ul li:hover,
+.dropdown-barang-modal ul li:hover,
+.dropdown-program-modal ul li:hover {
+    background-color: rgb(240, 240, 240);
+}
+
+.dropdown-lokasi-modal ul li.read-only,
+.dropdown-barang-modal ul li.read-only,
+.dropdown-program-modal ul li.read-only {
+    pointer-events: none;
+    color: rgb(150, 150, 150);
+}
+
+.dropdown-lokasi-modal .dropdown-item .lokasi-kode,
+.dropdown-barang-modal .dropdown-item .barang-kode,
+.dropdown-program-modal .dropdown-item .program-kode {
+    display: block;
+    font-weight: 500;
+}
+
+.dropdown-lokasi-modal .dropdown-item .lokasi-nama,
+.dropdown-barang-modal .dropdown-item .barang-nama,
+.dropdown-program-modal .dropdown-item .program-nama {
+    display: block;
+    font-size: 0.7rem;
+    color: rgb(120, 120, 120);
+    margin-top: 2px;
+}

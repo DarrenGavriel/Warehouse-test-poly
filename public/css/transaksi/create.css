@@ -1,0 +1,145 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* justify-content: center; */
+    padding: 50px 200px;
+}
+.transaksi-form {
+    position: relative;
+    width: 300px;
+    font-family: Arial, sans-serif;
+}
+.transaksi-form input{
+    width: 100%;
+    outline: none;
+    border: 1px solid rgb(204, 204, 204);
+    border-radius: 5px;
+    padding: 3px 5px;
+}
+.transaksi-form .select-lokasi{
+    position: relative;
+    cursor: pointer;
+    margin-bottom: 15px;
+}
+.transaksi-form .select-barang{
+    position: relative;
+    cursor: pointer;
+    margin-bottom: 15px;
+}
+.transaksi-form .select-lokasi::after{
+    content: "";
+    width: 3px;
+    height: 3px;
+    border: 2px solid;
+    border-color: transparent rgb(129, 129, 129) rgb(129, 129, 129) transparent;
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%) rotate(45deg); 
+}
+.transaksi-form .select-barang::after{
+    content: "";
+    width: 3px;
+    height: 3px;
+    border: 2px solid;
+    border-color: transparent rgb(129, 129, 129) rgb(129, 129, 129) transparent;
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%) rotate(45deg); 
+}
+.transaksi-form .dropdown-lokasi{
+    box-shadow: 0 5px 15px rgb(0 0 0 / 15%);
+    border-radius: 5px;
+    max-height: 200px;
+    overflow: auto;
+    display: none;
+    position: absolute;
+    z-index: 1;
+    background-color: white;
+    width: 100%;
+}
+.transaksi-form .dropdown-barang{
+    box-shadow: 0 5px 15px rgb(0 0 0 / 15%);
+    border-radius: 5px;
+    max-height: 200px;
+    overflow: auto;
+    display: none;
+    position: absolute;
+    z-index: 1;
+    background-color: white;
+    width: 100%;
+}
+.dropdown-lokasi.active{
+    display: block;
+}
+.dropdown-barang.active{
+    display: block;
+}
+.transaksi-form .dropdown-lokasi .search-lokasi{
+    padding: 5px;
+    border-bottom: 1px solid rgb(204, 204, 204);
+}
+.transaksi-form .dropdown-barang .search-barang{
+    padding: 5px;
+    border-bottom: 1px solid rgb(204, 204, 204);
+}
+.dropdown-item {
+    list-style: none;
+    padding: 8px 10px;
+    cursor: pointer;
+}
+.transaksi-form .dropdown-lokasi ul li {
+    font-size: 0.8rem;
+    padding: 8px 10px;
+}
+.transaksi-form .dropdown-barang ul li {
+    font-size: 0.8rem;
+    padding: 8px 10px;
+}
+.transaksi-form .dropdown-lokasi ul li:hover {
+    background-color: rgb(240, 240, 240);
+}
+.transaksi-form .dropdown-barang ul li:hover {
+    background-color: rgb(240, 240, 240);
+}
+.transaksi-form .dropdown-lokasi ul li.active {
+    background-color: rgb(220, 220, 220);
+}
+.transaksi-form .dropdown-barang ul li.active {
+    background-color: rgb(220, 220, 220);
+}
+.transaksi-form .dropdown-lokasi ul li.read-only {
+    pointer-events: none;
+    color: rgb(150, 150, 150);
+}
+.transaksi-form .dropdown-barang ul li.read-only {
+    pointer-events: none;
+    color: rgb(150, 150, 150);
+}
+.dropdown-item .lokasi-kode {
+    display: block;
+    font-weight: 500;
+}
+.dropdown-item .lokasi-nama {
+    display: block;
+    font-size: 0.7rem;
+    color: rgb(120, 120, 120);
+    margin-top: 2px;
+}
+.dropdown-item .barang-kode {
+    display: block;
+    font-weight: 500;
+}
+.dropdown-item .barang-nama {
+    display: block;
+    font-size: 0.7rem;
+    color: rgb(120, 120, 120);
+    margin-top: 2px;
+}

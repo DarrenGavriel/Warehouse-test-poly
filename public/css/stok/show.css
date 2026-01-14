@@ -1,0 +1,43 @@
+body {
+    background-color: #f4f7f6;
+    font-family: 'Inter', sans-serif;
+    color: #334155;
+}
+.card {
+    border: none;
+    border-radius: 12px;
+    overflow: hidden;
+}
+.table thead {
+    background-color: #f8fafc;
+}
+.table th {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.025em;
+    color: #64748b;
+    padding: 1rem;
+}
+.table td {
+    padding: 1rem;
+    vertical-align: middle;
+}
+/* Custom Pagination Styling */
+.pagination-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+.page-link {
+    border-radius: 6px;
+    margin: 0 2px;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+}
+.page-item.active .page-link {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
