@@ -249,6 +249,7 @@
     <script>
         $(document).ready(function() {
             var debounceTimer;
+            // buat mengambil dan menampilkan data riwayat transaksi
             function fetchLaporanTransaksi() {
                 var currentPage = new URLSearchParams(window.location.search).get('page') || 1;
                 var searchParams = window.location.search;
@@ -326,15 +327,18 @@
                 })
             }
             fetchLaporanTransaksi();
+            // handle ketika user pakai pagination
             $(document).on('click', '.page-link', function(e){
                 e.preventDefault();
                 var url = $(this).attr('href');
                 window.history.pushState({}, '', url);
                 fetchLaporanTransaksi();
             })
+            // handle ketika user pakai undo/ redo di browser
             window.onpopstate = function() {
                 fetchLaporanTransaksi();
             };
+            // buat load data lokasi list di filter modal
             function fetchLokasi() {
                 $.ajax({
                     url: '/api/lokasi',
@@ -353,6 +357,7 @@
                     }
                 })
             }
+            // buat load data barang list di filter modal
             function fetchBarang() {
                 $.ajax({
                     url: '/api/barang',
@@ -374,13 +379,12 @@
             fetchLokasi();
             fetchBarang();
 
-            // Dropdown handlers untuk modal create
+            // untuk handle dropdown di modal create
             $('.select-lokasi-modal').on('click', function() {
                 $('.dropdown-lokasi-modal').toggleClass('active');
                 $('.dropdown-barang-modal').removeClass('active');
                 $('.dropdown-program-modal').removeClass('active');
             });
-            
             $('.select-barang-modal').on('click', function() {
                 $('.dropdown-barang-modal').toggleClass('active');
                 $('.dropdown-lokasi-modal').removeClass('active');
@@ -391,7 +395,7 @@
                 $('.dropdown-lokasi-modal').removeClass('active');
                 $('.dropdown-barang-modal').removeClass('active');
             });
-            
+            // Buat ngambil dan menaruh value dari pilihan ke select lokasi
             $('#lokasi_list_modal').on('click', '.dropdown-item', function() {
                 var text = $(this).find('.lokasi-kode').text();
                 var id = $(this).data('id');
@@ -399,7 +403,7 @@
                 $('#id_lokasi_modal').val(id);
                 $('.dropdown-lokasi-modal').removeClass('active');
             });
-            
+            // Buat ngambil dan menaruh value dari pilihan ke select barang
             $('#barang_list_modal').on('click', '.dropdown-item', function() {
                 var text = $(this).find('.barang-kode').text();
                 var id = $(this).data('id');
@@ -407,7 +411,7 @@
                 $('#id_barang_modal').val(id);
                 $('.dropdown-barang-modal').removeClass('active');
             });
-
+            // Buat ngambil dan menaruh value dari pilihan ke select program
             $('#program_list_modal').on('click', '.dropdown-item', function() {
                 var text = $(this).find('.program-kode').text();
                 var id = $(this).data('id');
@@ -437,7 +441,7 @@
                     }
                 });
             }
-            
+            //buat nyari lokasi di modal create
             $('#search_lokasi_modal').on('keyup', function() {
                 var value = $(this).val().toLowerCase();
                 clearTimeout(debounceTimer);
@@ -466,7 +470,7 @@
                     });
                 }, 500);
             });
-            
+            //buat load data barang list di create modal
             function LoadDataBarangModal() {
                 $.ajax({
                     url: '/api/barang',
@@ -487,7 +491,7 @@
                     }
                 });
             }
-            
+            //buat nyari barang di modal create
             $('#search_barang_modal').on('keyup', function() {
                 var value = $(this).val().toLowerCase();
                 clearTimeout(debounceTimer);
@@ -516,6 +520,7 @@
                     });
                 }, 500);
             });
+            //buat load data program list di create modal
             function LoadDataProgramModal() {
                 $.ajax({
                     url: '/api/program',
@@ -536,6 +541,7 @@
                     }
                 });
             }
+            //buat nyari program di modal create
             $('#search_program_modal').on('keyup', function() {
                 var value = $(this).val().toLowerCase();
                 
@@ -610,13 +616,13 @@
                         var errorResponse = xhr.responseJSON;
                         console.log(errorResponse);
                         
-                        // Jika error 500, tampilkan di bawah header modal
+                        // nampilin error 500
                         if (xhr.status === 500) {
                             $('#error-500').append(errorResponse.message);
                             return;
                         }
                         
-                        // Tampilkan error validasi per field
+                        // nampilin error validasi
                         if (errorResponse.errors) {
                             for (var key in errorResponse.errors) {
                                 for (var i = 0; i < errorResponse.errors[key].length; i++) {
@@ -648,7 +654,7 @@
                                 }
                             }
                         } else {
-                            // Jika ada error message tapi bukan error 500
+                            // kalau ada error yang bukan validasi sama 500
                             $('#error-500').text(errorResponse.message).show();
                             return;
                         }
