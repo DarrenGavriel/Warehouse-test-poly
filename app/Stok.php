@@ -36,24 +36,15 @@ class Stok extends Model
     {
         $query = self::select('barang.kode_barang', 'barang.nama_barang', 'stok.id_lokasi')
             ->selectRaw('SUM(stok.saldo) as total_saldo, MAX(stok.tanggal_masuk) as terakhir_masuk')
-            ->join('barang', 'stok.id_barang', '=', 'barang.id');
-            if ($id_barang !== null AND $id_lokasi !== null) {
-                $query = $query->where('barang.id', $id_barang)
-                    ->where('stok.id_lokasi', $id_lokasi)
-                    ->groupBy('barang.kode_barang', 'barang.nama_barang', 'stok.id_lokasi')
-                    ->first();
-            } elseif ($id_barang !== null) {
-                $query = $query->where('barang.id', $id_barang)
-                    ->groupBy('barang.kode_barang', 'barang.nama_barang', 'stok.id_lokasi')
-                    ->first();
-            } elseif ($id_lokasi !== null) {
-                $query = $query->where('stok.id', $id_lokasi)
-                    ->groupBy('barang.kode_barang', 'barang.nama_barang', 'stok.id_lokasi')
-                    ->get();
-            } else {
-                $query = $query->groupBy('barang.kode_barang', 'barang.nama_barang', 'stok.id_lokasi')
-                    ->get();
-            }
+            ->join('barang', 'stok.id_barang', '=', 'barang.id')
+            ->when($id_barang, function ($query, $id_barang){
+                return $query->where('barang.id', $id_barang);
+            })
+            ->when($id_lokasi, function ($query, $id_lokasi){
+                return $query->where('stok.id_lokasi', $id_lokasi);
+            })
+            ->groupBy('barang.kode_barang', 'barang.nama_barang', 'stok.id_lokasi')
+            ->first();
         return $query;
     }
     public function checkStok($id_barang, $id_lokasi)
