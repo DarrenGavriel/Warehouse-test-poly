@@ -112,6 +112,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
+            // buat mengambil dan menampilkan data stok
             function fetchLaporanStok() {
                 var currentPage = new URLSearchParams(window.location.search).get('page') || 1;
                 var searchParams = window.location.search;
@@ -189,16 +190,18 @@
                 })
             }
             fetchLaporanStok();
+            // handle ketika user pakai pagination
             $(document).on('click', '.page-link', function(e){
                 e.preventDefault();
                 var url = $(this).attr('href');
                 window.history.pushState({}, '', url);
                 fetchLaporanStok();
         });
+        // handle ketika user pakai undo/ redo di browser
         window.onpopstate = function() {
             fetchLaporanStok();
         };
-        
+        // buat nampilin data lokasi di modal filter
         function fetchLokasi() {
             $.ajax({
                 url: '/api/lokasi',
@@ -217,6 +220,7 @@
                 }
             })
         }
+        // buat nampilin data barang di modal filter
         function fetchBarang() {
             $.ajax({
                 url: '/api/barang',
@@ -237,29 +241,26 @@
         }
         fetchLokasi();
         fetchBarang();
+        // handle submit filter form
         $('#filterForm').on('submit', function(e){
             e.preventDefault();
             var selectedLokasi = $('input[name="id_lokasi"]:checked').val();
             var selectedBarang = $('input[name="id_barang"]:checked').val();
-
             var params = new URLSearchParams(window.location.search);
-            
-            if (selectedLokasi) params.set('id_lokasi', selectedLokasi);
-            else params.delete('id_lokasi');
-            
-            if (selectedBarang) params.set('id_barang', selectedBarang);
-            else params.delete('id_barang');
-            
-            // Reset ke halaman 1 setiap kali filter berubah
+            if (selectedLokasi){
+                params.set('id_lokasi', selectedLokasi);
+            } else {
+                params.delete('id_lokasi');
+            } 
+            if (selectedBarang){
+                params.set('id_barang', selectedBarang);
+            } else {
+                params.delete('id_barang');
+            }
             params.set('page', 1);
-
-            // 3. Update URL di Address Bar Browser tanpa reload
             var newUrl = window.location.pathname + '?' + params.toString();
             window.history.pushState({}, '', newUrl);
-            
-            // 4. Panggil fungsi sakti yang akan ambil data berdasarkan URL sekarang
             $('#filterModal').modal('hide');
-            // fetchLaporanStok(params.toString());
             fetchLaporanStok();
         });
         });
