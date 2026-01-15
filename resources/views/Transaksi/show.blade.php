@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/transaksi/show.css') }}">
-    <title>Document</title>
+    <title>Laporan Transaksi</title>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
@@ -22,6 +22,7 @@
             </div>
         </div>
     </nav>
+    <div id="success" class="alert alert-success mx-3 mt-3" style="display: none;" role="alert"></div>
     <div class="container py-5">
         <div class="row">
             <div class="col-12">
@@ -330,6 +331,7 @@
             // handle ketika user pakai pagination
             $(document).on('click', '.page-link', function(e){
                 e.preventDefault();
+                $('#success').empty().hide();
                 var url = $(this).attr('href');
                 window.history.pushState({}, '', url);
                 fetchLaporanTransaksi();
@@ -578,6 +580,9 @@
             
             $('#filterForm').submit(function(e){
                 e.preventDefault();
+                $('.text-danger').empty().hide();
+                $('#error-500').empty().hide();
+                $('#success').empty().hide();
                 var formData = $(this).serializeArray();
                 var params = new URLSearchParams();
                 $.each(formData, function(index, field){
@@ -597,6 +602,7 @@
                 // Sembunyikan semua error sebelumnya
                 $('.text-danger').empty().hide();
                 $('#error-500').empty().hide();
+                $('#success').empty().hide();
                 
                 var formData = $(this).serialize();
                 $.ajax({
@@ -604,13 +610,17 @@
                     method: 'POST',
                     data: formData,
                     success: function(response) {
-                        alert('Transaksi berhasil dibuat!');
+                        fetchLaporanTransaksi();
+                        var successAlert = $('#success');
+                        successAlert.append(response.message).show();
                         $('#buatTransaksiModal').modal('hide');
                         $('#createForm')[0].reset();
                         $('.select-lokasi-modal input').val('Pilih Lokasi');
                         $('.select-barang-modal input').val('Pilih Barang');
                         $('.select-program-modal input').val('Pilih Program');
-                        fetchLaporanTransaksi();
+                        $('#id_lokasi_modal').val('');
+                        $('#id_barang_modal').val('');
+                        $('#id_program_modal').val('');
                     },
                     error: function(xhr) {
                         var errorResponse = xhr.responseJSON;

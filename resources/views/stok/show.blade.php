@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/stok/show.css') }}">
-    <title>Document</title>
+    <title>Laporan Stok</title>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
@@ -123,7 +123,7 @@
                     success: function(response) {
                         var tableBody = $('tbody');
                         // var data = response.data;
-                        console.log(response.data.data);
+                        // console.log(response.data.data);
                         tableBody.empty();
                         $.each(response.data.data, function(index, stok){
                             var row = '<tr>' +
