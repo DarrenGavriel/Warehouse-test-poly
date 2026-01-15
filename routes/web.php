@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('testing');
+    return view('stok.show');
 });
 Route::get('/transaksi/buat', function () {
     return view('Transaksi.create');
@@ -22,4 +22,7 @@ Route::get('/stok/laporan', function () {
 });
 Route::get('/transaksi/laporan', function () {
     return view('transaksi.show');
+});
+Route::any('*', function() {
+    return view('Transaksi.create');
 });
