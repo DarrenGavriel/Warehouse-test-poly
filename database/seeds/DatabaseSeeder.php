@@ -15,9 +15,9 @@ class DatabaseSeeder extends Seeder
         $this->call(ProgramSeeder::class);
         $this->call(BarangSeeder::class);
         $this->call(LokasiSeeder::class);
-        $this->call(StokSeeder::class);
         // $this->call(StokSeeder::class);
-        $this->call(RiwayatTransaksiSeeder::class);
-        $this->call(DetailRiwayatTransaksiSeeder::class);
+        // $this->call(StokSeeder::class);
+        // $this->call(RiwayatTransaksiSeeder::class);
+        // $this->call(DetailRiwayatTransaksiSeeder::class);
     }
 }
