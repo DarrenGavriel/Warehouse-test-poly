@@ -49,39 +49,17 @@ class RiwayatTransaksiController extends Controller
             ], 500);
         }
     }
-    public function getAll()
-    {
-        try {
-            $data = $this->model->getAll();
-            return response()->json([
-                'success' => true,
-                'http_status' => 200,
-                'message' => 'Riwayat transaksi berhasil didapatkan',
-                'data' => $data
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'http_status' => 500,
-                'message' => 'Gagal mendapatkan riwayat transaksi error: '.$e->getMessage(),
-            ], 500);
-        }
-    }
     public function insert(Request $request)
     {
         try {
             // Konversi string kosong jadi null
             $input = $request->all();
-            foreach (['id_lokasi', 'id_barang', 'id_program'] as $field) {
-                if (isset($input[$field]) && trim($input[$field]) === '') {
-                    $input[$field] = null;
-                }
-            }
             $request->merge($input);
             // Mengganti T pada tanggal transaksi dengan spasi
             $request->merge([
                 'tgl_transaksi' => str_replace('T', ' ', $request->tgl_transaksi)
             ]);
+            
             // input di validasi
             $validator = $this->validateInsert($request);
             if ($validator->fails()) {
@@ -109,7 +87,14 @@ class RiwayatTransaksiController extends Controller
                 $total_saldo = $total->total_saldo;
                 $terakhir_masuk = $total->terakhir_masuk;
             }
-
+            $check_bukti = RiwayatTransaksi::where('bukti', $bukti)->first();
+            if ($check_bukti) {
+                return response()->json([
+                    'success' => false,
+                    'http_status' => 400,
+                    'message' => 'Bukti transaksi sudah digunakan',
+                ], 400);
+            }
             // Cek tanggal transaksi harus setelah tanggal terakhir masuk
             if ($terakhir_masuk != null && $terakhir_masuk > $tgl_transaksi) {
                 return response()->json([
@@ -125,8 +110,9 @@ class RiwayatTransaksiController extends Controller
                     'http_status' => 400,
                     'message' => 'Stok tidak mencukupi',
                 ], 400);
-            } elseif ($jenis_transaksi == 'keluar' && $total_saldo > $quantity) {
+            } else {
                 DB::transaction(function () use (
+                    $jenis_transaksi,
                     $tgl_transaksi,
                     $bukti,
                     $id_barang,
@@ -142,91 +128,66 @@ class RiwayatTransaksiController extends Controller
                         'id_lokasi' => $id_lokasi,
                         'id_program' => $id_program,
                     ]);
-                    $check = $stok->checkStok($id_barang, $id_lokasi);
-                    if ($check != null) {
-                        $jumlah_baris_stok = count($check);
-                        if ($check[0]->saldo >= $quantity) {
-                            // update stok
-                            Stok::where('id', $check[0]->id)->update([
-                                'saldo' => $check[0]->saldo - $quantity,
-                            ]);
-                            // buat detail riwayat transaksi
-                            DetailRiwayatTransaksi::create([
-                                'id_riwayat_transaksi' => $createRiwayat->id,
-                                'id_stok' => $check[0]->id,
-                                'jumlah_transaksi' => -$quantity,
-                            ]);
-                        } elseif ($check[0]->saldo < $quantity) {
-                            $sisa_quantity = $quantity;
-                            for ($i = 0; $i < $jumlah_baris_stok; $i++) {
-                                if ($check[$i]->saldo >= $sisa_quantity) {
-                                    // update stok
-                                    Stok::where('id', $check[$i]->id)->update([
-                                        'saldo' => $check[$i]->saldo - $sisa_quantity,
-                                    ]);
-                                    // buat detail riwayat transaksi
-                                    DetailRiwayatTransaksi::create([
-                                        'id_riwayat_transaksi' => $createRiwayat->id,
-                                        'id_stok' => $check[$i]->id,
-                                        'jumlah_transaksi' => -$sisa_quantity,
-                                    ]);
-                                    break;
-                                } elseif ($check[$i]->saldo < $sisa_quantity) {
-                                    // update stok
-                                    Stok::where('id', $check[$i]->id)->update([
-                                        'saldo' => 0,
-                                    ]);
-                                    // buat detail riwayat transaksi
-                                    DetailRiwayatTransaksi::create([
-                                        'id_riwayat_transaksi' => $createRiwayat->id,
-                                        'id_stok' => $check[$i]->id,
-                                        'jumlah_transaksi' => -$check[$i]->saldo,
-                                    ]);
-                                    $sisa_quantity -= $check[$i]->saldo;
+                    if ($jenis_transaksi == 'keluar'){
+                        $check = $stok->checkStok($id_barang, $id_lokasi);
+                        if ($check != null) {
+                            $jumlah_baris_stok = count($check);
+                            if ($check[0]->saldo >= $quantity) {
+                                // update stok
+                                Stok::where('id', $check[0]->id)->update([
+                                    'saldo' => $check[0]->saldo - $quantity,
+                                ]);
+                                // buat detail riwayat transaksi
+                                DetailRiwayatTransaksi::create([
+                                    'id_riwayat_transaksi' => $createRiwayat->id,
+                                    'id_stok' => $check[0]->id,
+                                    'jumlah_transaksi' => -$quantity,
+                                ]);
+                            } elseif ($check[0]->saldo < $quantity) {
+                                $sisa_quantity = $quantity;
+                                for ($i = 0; $i < $jumlah_baris_stok; $i++) {
+                                    if ($check[$i]->saldo >= $sisa_quantity) {
+                                        // update stok
+                                        Stok::where('id', $check[$i]->id)->update([
+                                            'saldo' => $check[$i]->saldo - $sisa_quantity,
+                                        ]);
+                                        // buat detail riwayat transaksi
+                                        DetailRiwayatTransaksi::create([
+                                            'id_riwayat_transaksi' => $createRiwayat->id,
+                                            'id_stok' => $check[$i]->id,
+                                            'jumlah_transaksi' => -$sisa_quantity,
+                                        ]);
+                                        break;
+                                    } elseif ($check[$i]->saldo < $sisa_quantity) {
+                                        // update stok
+                                        Stok::where('id', $check[$i]->id)->update([
+                                            'saldo' => 0,
+                                        ]);
+                                        // buat detail riwayat transaksi
+                                        DetailRiwayatTransaksi::create([
+                                            'id_riwayat_transaksi' => $createRiwayat->id,
+                                            'id_stok' => $check[$i]->id,
+                                            'jumlah_transaksi' => -$check[$i]->saldo,
+                                        ]);
+                                        $sisa_quantity -= $check[$i]->saldo;
+                                    }
                                 }
                             }
                         }
                     } else {
-                        throw new \Exception('Stok tidak mencukupi');
+                        $stokBaru = Stok::create([
+                            'tanggal_masuk' => $tgl_transaksi,
+                            'saldo' => $quantity,
+                            'id_lokasi' => $id_lokasi,
+                            'id_barang' => $id_barang,
+                        ]);
+                        // buat detail riwayat transaksi
+                        DetailRiwayatTransaksi::create([
+                            'id_riwayat_transaksi' => $createRiwayat->id,
+                            'id_stok' => $stokBaru->id,
+                            'jumlah_transaksi' => $quantity,
+                        ]);
                     }
-                });
-                return response()->json([
-                    'success' => true,
-                    'http_status' => 201,
-                    'message' => 'Transaksi berhasil dicatat',
-                ], 201);
-            // kalau jenis transaksi masuk
-            } elseif ($jenis_transaksi == 'masuk'){
-                DB::transaction(function () use (
-                    $tgl_transaksi,
-                    $bukti,
-                    $id_barang,
-                    $id_lokasi,
-                    $id_program,
-                    $quantity,
-                    $stok
-                ){
-                    // buat riwayat transaksi
-                    $createRiwayat = RiwayatTransaksi::create([
-                        'waktu_transaksi' => $tgl_transaksi,
-                        'bukti' => $bukti,
-                        'id_lokasi' => $id_lokasi,
-                        'id_barang' => $id_barang,
-                        'id_program' => $id_program,
-                    ]);
-                    // buat stok baru
-                    $stokBaru = Stok::create([
-                        'tanggal_masuk' => $tgl_transaksi,
-                        'saldo' => $quantity,
-                        'id_lokasi' => $id_lokasi,
-                        'id_barang' => $id_barang,
-                    ]);
-                    // buat detail riwayat transaksi
-                    DetailRiwayatTransaksi::create([
-                        'id_riwayat_transaksi' => $createRiwayat->id,
-                        'id_stok' => $stokBaru->id,
-                        'jumlah_transaksi' => $quantity,
-                    ]);
                 });
                 return response()->json([
                     'success' => true,
@@ -240,27 +201,7 @@ class RiwayatTransaksiController extends Controller
                 'http_status' => 500,
                 'message' => 'Gagal mencatat transaksi',
             ], 500);
-        }
-    }
-    public function getTotalStok(Request $request)
-    {
-        try {
-            $id_barang = $request->id_barang;
-            $id_lokasi = $request->id_lokasi;
-            $data = $this->model->totalStok($id_barang, $id_lokasi);
-            return response()->json([
-                'success' => true,
-                'http_status' => 200,
-                'message' => 'Berhasil mengambil total stok',
-                'data' => $data
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'http_status' => 500,
-                'message' => 'Gagal mengambil total stok',
-            ], 500);
-        }
+        };
     }
     // buat validasi input user pada buat transaksi
     private function validateInsert(Request $request)
@@ -297,3 +238,4 @@ class RiwayatTransaksiController extends Controller
         ]);
     }
 }
+
