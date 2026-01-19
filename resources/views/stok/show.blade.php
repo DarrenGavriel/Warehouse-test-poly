@@ -39,7 +39,7 @@
                                     <th>Kode Lokasi</th>
                                     <th>Kode Barang</th>
                                     <th>Nama Barang</th>
-                                    <th>Saldo</th>
+                                    <th class="text-end">Saldo</th>
                                     <th>Tanggal Masuk</th>
                                 </tr>
                             </thead>
@@ -122,16 +122,27 @@
                     cache: false,
                     success: function(response) {
                         var tableBody = $('tbody');
-                        // var data = response.data;
-                        // console.log(response.data.data);
+                        //format angka ke format dengan separator koma
+                        function toCommas(value){
+                            return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                        }
+                        //format tanggal ke format indonesia
+                        function formatDate(dateString){
+                            var date = new Date(dateString);
+                            return date.toLocaleDateString('id-ID', {
+                                year: 'numeric',
+                                month: '2-digit',
+                                day: '2-digit'
+                            });
+                        }
                         tableBody.empty();
                         $.each(response.data.data, function(index, stok){
                             var row = '<tr>' +
-                                '<td class="text-center text-muted fw-medium">' + stok.kode_lokasi + '</td>' +
-                                '<td class="text-center text-muted fw-medium">' + stok.kode_barang + '</td>' +
-                                '<td class="text-center text-muted fw-medium">' + stok.nama_barang + '</td>' +
-                                '<td class="text-center text-muted fw-medium">' + stok.total_saldo + '</td>' +
-                                '<td class="text-center text-muted fw-medium">' + stok.tanggal_masuk + '</td>' +
+                                '<td class=" text-muted fw-medium">' + stok.kode_lokasi + '</td>' +
+                                '<td class=" text-muted fw-medium">' + stok.kode_barang + '</td>' +
+                                '<td class=" text-muted fw-medium">' + stok.nama_barang + '</td>' +
+                                '<td class="text-end text-muted fw-medium">' + toCommas(stok.total_saldo) + '</td>' +
+                                '<td class=" text-muted fw-medium">' + formatDate(stok.tanggal_masuk) + '</td>' +
                                 '</tr>';
                             tableBody.append(row);
                         })
