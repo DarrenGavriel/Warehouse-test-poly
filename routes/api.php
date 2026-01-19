@@ -14,16 +14,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
 Route::get('/lokasi', 'LokasiController@getAll');
 Route::get('/barang', 'BarangController@getAll');
 Route::get('/program', 'ProgramController@getAll');
-Route::get('/stok', 'StokController@getAll');
-Route::get('/stok/total', 'StokController@getTotalStok');
-Route::get('/riwayat', 'RiwayatTransaksiController@getAll');
-Route::post('/transaksi', 'RiwayatTransaksiController@insert');
-Route::get('/stok/laporan', 'StokController@getLaporanStok');
-Route::get('/transaksi/laporan', 'RiwayatTransaksiController@getLaporanTransaksi');
-Route::get('/stok/check', 'StokController@checkStok');
+Route::prefix('stok')->group(function () {
+    Route::get('/', 'StokController@getAll');
+    // Route::get('/check', 'StokController@checkStok');
+    Route::get('/laporan', 'StokController@getLaporanStok');
+});
+Route::prefix('transaksi')->group(function () {
+    Route::get('/', 'RiwayatTransaksiController@getAll');
+    Route::post('/', 'RiwayatTransaksiController@insert');
+    Route::get('/laporan', 'RiwayatTransaksiController@getLaporanTransaksi');
+});
