@@ -22,16 +22,6 @@ class Stok extends Model
     {
         return $this->hasMany(DetailRiwayatTransaksi::class, 'id_detail_stok', 'id');
     }
-    public function infoStok()
-    {
-        $query = self::select('barang.kode_barang', 'barang.nama_barang', 'lokasi.nama_lokasi', 'stok.tanggal_masuk')
-            ->selectRaw('SUM(stok.saldo) as total_saldo')
-            ->join('barang', 'stok.id_barang', '=', 'barang.id')
-            ->join('lokasi', 'stok.id_lokasi', '=', 'lokasi.id')
-            ->groupBy('barang.kode_barang', 'lokasi.nama_lokasi', 'barang.nama_barang', 'stok.tanggal_masuk')
-            ->get();
-        return $query;
-    }
     public function totalStok($id_barang = null, $id_lokasi = null)
     {
         $query = self::select('barang.kode_barang', 'barang.nama_barang', 'stok.id_lokasi')
