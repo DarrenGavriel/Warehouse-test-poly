@@ -12,17 +12,14 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('stok.show');
+    return view('Stok.show');
 });
 Route::get('/transaksi/buat', function () {
     return view('Transaksi.create');
 });
 Route::get('/stok/laporan', function () {
-    return view('stok.show');
+    return view('Stok.show');
 });
 Route::get('/transaksi/laporan', function () {
-    return view('transaksi.show');
-});
-Route::any('*', function() {
-    return view('Transaksi.create');
+    return view('Transaksi.show');
 });
