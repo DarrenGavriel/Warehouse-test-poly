@@ -29,7 +29,7 @@ class StokController extends Controller
                 'message' => 'Gagal mengambil info stok',
             ], 500);
         }
-    }
+    }    
     public function getTotalStok(Request $request)
     {
         try {
@@ -81,33 +81,6 @@ class StokController extends Controller
                 'success' => false,
                 'http_status' => 500,
                 'message' => 'Gagal mengambil laporan stok' . $e->getMessage(),
-            ], 500);
-        }
-    }
-    public function checkStok(Request $request)
-    {
-        try {
-            $id_barang = $request->id_barang;
-            $id_lokasi = $request->id_lokasi;
-            $data = $this->model->checkStok($id_barang, $id_lokasi);
-            if (count($data) == 0) {
-                return response()->json([
-                    'success' => false,
-                    'http_status' => 404,
-                    'message' => 'Stok tidak ditemukan',
-                ], 404);
-            }
-            return response()->json([
-                'success' => true,
-                'http_status' => 200,
-                'message' => 'Berhasil mengambil data stok',
-                'data' => $data
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'http_status' => 500,
-                'message' => 'Gagal mengambil data stok'. $e->getMessage(),
             ], 500);
         }
     }
