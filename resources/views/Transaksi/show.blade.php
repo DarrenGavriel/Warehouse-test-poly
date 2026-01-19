@@ -44,7 +44,7 @@
                                         <th>kode barang</th>
                                         <th>tanggal transaksi</th>
                                         <th>jam transaksi</th>
-                                        <th>total transaksi</th>
+                                        <th class="text-end">total transaksi</th>
                                         <th>tanggal masuk</th>
                                         <th>program</th>
                                     </tr>
@@ -82,7 +82,7 @@
                         <div class="mb-4">
                             <h6 class="fw-bold mb-3">Filter Bukti</h6>
                             <div id="bukti-list">
-                                <div class="form-check">
+                                <div class="form-check p-0">
                                     <input class="form-control" type="text" name="bukti" id="bukti" value="">
                                 </div>
                             </div>
@@ -91,9 +91,11 @@
                         <div>
                             <h6 class="fw-bold mb-3">Filter Tanggal Transaksi</h6>
                             <div id="tanggal-transaksi-list">
-                                <div class="form-check">
+                                <div class="form-check p-0">
                                     <input type="date" class="form-control" id="tanggal_transaksi" name="tanggal_transaksi" value="">
                                 </div>
+                                <h8 class="fw-bold mb-3">Formated</h8>
+                                <input class="form-control" type="text" id="tgl_transaksi_view" name="tgl_transaksi_view" value="" readonly>
                             </div>
                         </div>
                         <hr>
@@ -162,8 +164,8 @@
                         <div>
                             <h6 class="fw-bold mb-3">Bukti Transaksi</h6>
                             <div id="bukti_list">
-                                <div class="form-check">
-                                    <input type="text" class="form-control" id="bukti" name="bukti" value="">
+                                <div class="form-check p-0">
+                                    <input type="text" class="form-control bukti-create" id="bukti" name="bukti" value="">
                                 </div>
                             </div>
                             <div class="text-danger small mt-1" id="error-bukti" style="display: none;"></div>
@@ -171,8 +173,9 @@
                         <hr>
                         <div>
                             <h6 class="fw-bold mb-3">Kode Lokasi</h6>
-                            <div class="select-lokasi-modal">
-                                <input type="text" value="Pilih Lokasi" readonly>
+                            <div class="select-lokasi-modal form-check p-0">
+                                <!-- <input type="text" value="Pilih Lokasi" readonly> -->
+                                <input type="text" class="form-control" value="Pilih Lokasi" readonly>
                             </div>
                             <div class="dropdown-lokasi-modal">
                                 <div class="search-lokasi">
@@ -188,8 +191,9 @@
                         <hr>
                         <div>
                             <h6 class="fw-bold mb-3">Nama Barang</h6>
-                            <div class="select-barang-modal">
-                                <input type="text" value="Pilih Barang" readonly>
+                            <div class="select-barang-modal form-check p-0">
+                                <!-- <input type="text" value="Pilih Barang" readonly> -->
+                                <input type="text" class="form-control" value="Pilih Barang" readonly>
                             </div>
                             <div class="dropdown-barang-modal">
                                 <div class="search-barang">
@@ -205,8 +209,9 @@
                         <hr>
                         <div>
                             <h6 class="fw-bold mb-3">Nama Program</h6>
-                            <div class="select-program-modal">
-                                <input type="text" value="Pilih Program" readonly>
+                            <div class="select-program-modal form-check p-0">
+                                <!-- <input type="text" value="Pilih Program" readonly> -->
+                                <input type="text" class="form-control" value="Pilih Program" readonly>
                             </div>
                             <div class="dropdown-program-modal">
                                 <div class="search-program">
@@ -225,21 +230,23 @@
                             <div class="mb-3">
                                 <input class="form-control" type="datetime-local" id="tgl_transaksi" name="tgl_transaksi" value="">
                             </div>
+                            <h8 class="fw-bold mb-3">Formated</h8>
+                            <input class="form-control" type="text" id="tgl_transaksi_view" name="tgl_transaksi_view" value="" readonly>
                             <div class="text-danger small mt-1" id="error-tgl_transaksi" style="display: none;"></div>
                         </div>
                         <hr>
                         <div>
                             <h6 class="fw-bold mb-3">Jumlah</h6>
                             <div class="mb-3">
-                                <input class="form-control" type="number" id="jumlah" name="quantity" value="0">
+                                <input class="form-control" type="number" id="jumlah" name="quantity" value="0" onFocus="this.type='number'; this.value=this.lastValue" onBlur="this.type=''; this.lastValue=this.value; this.value=this.value==''?'':(+this.value).toLocaleString()" oninput="this.value = this.value.replace(/\D+/g, '')">
                             </div>
                             <div class="text-danger small mt-1" id="error-quantity" style="display: none;"></div>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="reset" class="btn btn-secondary">Clear</button>
-                        <button type="submit" class="btn btn-primary">Save changes</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                        <button type="reset" class="btn btn-secondary reset-button">Reset</button>
+                        <button type="submit" class="btn btn-primary">Simpan perubahan</button>
                     </div>
                 </form>
             </div>
@@ -249,6 +256,14 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
+            function formatDate(dateString){
+                            var date = new Date(dateString);
+                            return date.toLocaleDateString('id-ID', {
+                                year: 'numeric',
+                                month: '2-digit',
+                                day: '2-digit'
+                            });
+                        }
             var debounceTimer;
             // buat mengambil dan menampilkan data riwayat transaksi
             function fetchLaporanTransaksi() {
@@ -260,16 +275,20 @@
                     success: function(response) {
                         var tableBody = $('tbody');
                         tableBody.empty();
-                        console.log(response);
+                        //format angka ke format dengan separator koma
+                        function toCommas(value){
+                            return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                        }
+                        // console.log(response);
                         $.each(response.data.data, function(index, transaksi){
                             var row = '<tr>' +
                                 '<td>' + transaksi.bukti_transaksi + '</td>' +
                                 '<td>' + transaksi.kode_lokasi + '</td>' +
                                 '<td>' + transaksi.kode_barang + '</td>' +
-                                '<td>' + transaksi.tanggal_transaksi + '</td>' +
+                                '<td>' + formatDate(transaksi.tanggal_transaksi) + '</td>' +
                                 '<td>' + transaksi.jam_transaksi + '</td>' +
-                                '<td>' + transaksi.total_transaksi + '</td>' +
-                                '<td>' + transaksi.tanggal_masuk + '</td>' +
+                                '<td class="text-end">' + toCommas(transaksi.total_transaksi) + '</td>' +
+                                '<td>' + formatDate(transaksi.tanggal_masuk) + '</td>' +
                                 '<td>' + transaksi.program + '</td>' +
                                 '</tr>';
                             tableBody.append(row);
@@ -399,7 +418,9 @@
             });
             // Buat ngambil dan menaruh value dari pilihan ke select lokasi
             $('#lokasi_list_modal').on('click', '.dropdown-item', function() {
-                var text = $(this).find('.lokasi-kode').text();
+                var lokasi_kode = $(this).find('.lokasi-kode').text();
+                var lokasi_nama = $(this).find('.lokasi-nama').text();
+                var text = lokasi_kode + ' | ' + lokasi_nama;
                 var id = $(this).data('id');
                 $('.select-lokasi-modal input').val(text);
                 $('#id_lokasi_modal').val(id);
@@ -407,7 +428,9 @@
             });
             // Buat ngambil dan menaruh value dari pilihan ke select barang
             $('#barang_list_modal').on('click', '.dropdown-item', function() {
-                var text = $(this).find('.barang-kode').text();
+                var barang_kode = $(this).find('.barang-kode').text();
+                var barang_nama = $(this).find('.barang-nama').text();
+                var text = barang_kode + ' | ' + barang_nama;
                 var id = $(this).data('id');
                 $('.select-barang-modal input').val(text);
                 $('#id_barang_modal').val(id);
@@ -415,9 +438,9 @@
             });
             // Buat ngambil dan menaruh value dari pilihan ke select program
             $('#program_list_modal').on('click', '.dropdown-item', function() {
-                var text = $(this).find('.program-kode').text();
+                var program_kode = $(this).find('.program-kode').text();
                 var id = $(this).data('id');
-                $('.select-program-modal input').val(text);
+                $('.select-program-modal input').val(program_kode);
                 $('#id_program_modal').val(id);
                 $('.dropdown-program-modal').removeClass('active');
             });
@@ -618,9 +641,9 @@
                         $('.select-lokasi-modal input').val('Pilih Lokasi');
                         $('.select-barang-modal input').val('Pilih Barang');
                         $('.select-program-modal input').val('Pilih Program');
-                        $('#id_lokasi_modal').val('');
-                        $('#id_barang_modal').val('');
-                        $('#id_program_modal').val('');
+                        $('#id_lokasi_modal').val(null);
+                        $('#id_barang_modal').val(null);
+                        $('#id_program_modal').val(null);
                     },
                     error: function(xhr) {
                         var errorResponse = xhr.responseJSON;
@@ -671,6 +694,53 @@
                     }
                 })
             })
+            // $('#tgl_transaksi').on('focus', function() {
+            //     $tanggal = new Date($(this).val());
+            //     var formatedDate = formatDate($tanggal);
+            // })
+            // buat uppercase bukti transaksi di filter
+            $('#bukti').on('blur', function() {
+                $bukti = $(this).val();
+                $('#bukti').val($bukti.toUpperCase());
+            })
+            // buat uppercase bukti transaksi di create
+            $('.bukti-create').on('blur', function() {
+                $bukti = $(this).val();
+                $('.bukti-create').val($bukti.toUpperCase());
+            })
+            $('.reset-button').on('click', function() {
+                $('.text-danger').empty().hide();
+                $('#error-500').empty().hide();
+                $('#id_lokasi_modal').val(null);
+                $('#id_barang_modal').val(null);
+                $('#id_program_modal').val(null);
+            })
+            $('#tgl_transaksi').on('change', function() {
+                var tglValue = $(this).val();
+                if(tglValue){
+                    var date = new Date(tglValue);
+                    var formattedDate = formatDate(date) + ' ' + date.toLocaleTimeString('id-ID', {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    $('#tgl_transaksi_view').val(formattedDate);
+                } else {
+                    $('#tgl_transaksi_view').val('');
+                }
+            })  
+            $('#tanggal_transaksi').on('change', function() {
+                var tglValue = $(this).val();
+                if(tglValue){
+                    var date = new Date(tglValue);
+                    var formattedDate = formatDate(date) + ' ' + date.toLocaleTimeString('id-ID', {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    $('#tgl_transaksi_view').val(formatDate(tglValue));
+                } else {
+                    $('#tgl_transaksi_view').val('');
+                }
+            })  
         })
     </script>
 </body>
