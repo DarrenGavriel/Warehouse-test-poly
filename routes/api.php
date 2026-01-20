@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/lokasi', 'LokasiController@getAll');
+// Route::get('/lokasi', 'LokasiController@getAll');
 Route::get('/barang', 'BarangController@getAll');
 Route::get('/program', 'ProgramController@getAll');
 Route::prefix('stok')->group(function () {
@@ -26,4 +26,11 @@ Route::prefix('transaksi')->group(function () {
     Route::get('/', 'RiwayatTransaksiController@getAll');
     Route::post('/', 'RiwayatTransaksiController@insert');
     Route::get('/laporan', 'RiwayatTransaksiController@getLaporanTransaksi');
+});
+Route::prefix('lokasi')->group(function () {
+    Route::get('/', 'LokasiController@getAll');
+    Route::post('/', 'LokasiController@createLokasi');
+    Route::delete('/{id}', 'LokasiController@deleteLokasi');
+    Route::put('/{id}', 'LokasiController@updateLokasi');
+    Route::get('/{id}', 'LokasiController@getLokasiById');
 });
