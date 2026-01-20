@@ -34,7 +34,7 @@
                         <h3 class="fw-bold">Lokasi Master</h3>
                     </div>
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#buatLokasiModal">Tambah Lokasi</button>
-                    <button type="button" class="btn btn-secondary">Filter Lokasi</button>
+                    <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#filterLokasiModal">Filter Lokasi</button>
                 </div>
                 <div class="card shadow-sm">
                     <div class="table-responsive">
@@ -139,14 +139,45 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal edit</button>
                         <button type="submit" class="btn btn-primary">Perbarui lokasi</button>
+                    </div>
                 </form>
             </div>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <div class="modal fade" id="filterLokasiModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="filterLokasiModalLabel">Filter Lokasi</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="filterForm">
+                    <div class="modal-body">
+                        <div>
+                            <h6 class="fw-bold mb-3">Kode Lokasi | Nama Lokasi</h6>
+                            <div class="kode_list">
+                                <div class="form-check p-0">
+                                    <input type="text" class="form-control lokasi-filter" name="search" id="search_lokasi" value="" placeholder="Masukkan kode atau nama lokasi">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="reset" class="btn btn-secondary">Clear</button>
+                        <button type="submit" class="btn btn-primary">Apply Filter</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         $(document).ready(function() {
+            function toCommas(value){
+                return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            }
             function formatDate(dateString){
                 var date = new Date(dateString);
                 var formattedDate = date.toLocaleDateString('id-ID', {
@@ -177,8 +208,9 @@
                         var perPage = response.data.per_page;
                         $.each(response.data.data, function(index, lokasi) {
                             var number = (currentPaginationPage - 1) * perPage + index + 1;
+                            // var number = 1000000;
                             var row = '<tr>' +
-                                '<td>' + number + '</td>' +
+                                '<td>' + toCommas(number) + '</td>' +
                                 '<td>' + lokasi.kode_lokasi + '</td>' +
                                 '<td>' + lokasi.nama_lokasi + '</td>' +
                                 '<td>' + formatDate(lokasi.created_at)  + '</td>' +
@@ -377,6 +409,26 @@
             window.onpopstate = function() {
                 fetchLokasi();
             }
+            $('#filterForm').on('submit', function(e) {
+                e.preventDefault();
+                var formData = $(this).serializeArray();
+                var params = new URLSearchParams();
+                $.each(formData, function(index, field) {
+                    if(field.value) {
+                        params.append(field.name, field.value);
+                    }
+                });
+                $('#filterLokasiModal').modal('hide');
+                params.set('page', 1);
+                var newUrl = window.location.pathname + '?' + params.toString();
+                window.history.pushState({}, '', newUrl);
+                fetchLokasi();
+            });
+            $('#filterForm').on('reset', function() {
+                setTimeout(function() {
+                    $('#search_lokasi').val('');
+                }, 0);
+            });
         });
     </script>
 </body>
