@@ -14,12 +14,12 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('Stok.show');
 });
-Route::get('/transaksi/buat', function () {
-    return view('Transaksi.create');
-});
 Route::get('/stok/laporan', function () {
     return view('Stok.show');
 });
 Route::get('/transaksi/laporan', function () {
     return view('Transaksi.show');
+});
+Route::get('/lokasi/master', function () {
+    return view('Lokasi.show');
 });
