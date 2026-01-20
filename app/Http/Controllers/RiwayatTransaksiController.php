@@ -76,7 +76,7 @@ class RiwayatTransaksiController extends Controller
             $id_program = $request->id_program;
             $tgl_transaksi = $request->tgl_transaksi;
             $quantity = $request->quantity;
-            $bukti = $request->bukti;
+            $bukti = strtoupper($request->bukti);
             // ini buat validasi tanggal transaksi dan total saldo
             $stok = new Stok();
             $total = $stok->totalStok($id_barang, $id_lokasi);
