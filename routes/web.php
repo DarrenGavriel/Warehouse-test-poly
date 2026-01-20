@@ -23,3 +23,6 @@ Route::get('/transaksi/laporan', function () {
 Route::get('/lokasi/master', function () {
     return view('Lokasi.show');
 });
+Route::get('/barang/master', function () {
+    return view('Barang.show');
+});
