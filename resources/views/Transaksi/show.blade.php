@@ -18,6 +18,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/transaksi/laporan">Transaksi</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/lokasi/master">Lokasi</a>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -257,13 +260,13 @@
     <script>
         $(document).ready(function() {
             function formatDate(dateString){
-                            var date = new Date(dateString);
-                            return date.toLocaleDateString('id-ID', {
-                                year: 'numeric',
-                                month: '2-digit',
-                                day: '2-digit'
-                            });
-                        }
+                var date = new Date(dateString);
+                return date.toLocaleDateString('id-ID', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit'
+                });
+            }
             var debounceTimer;
             // buat mengambil dan menampilkan data riwayat transaksi
             function fetchLaporanTransaksi() {
@@ -339,10 +342,10 @@
                     },
                     error: function(xhr) {
                         var errorResponse = xhr.responseJSON;
-                            $('tbody').empty();
+                        $('tbody').empty();
                             $('#info').empty();
                             $('.pagination').empty();
-                            $('tbody').append('<tr><td colspan="5" class="text-center text-muted fw-medium"> ' + errorResponse.message + ' </td></tr>');
+                            $('tbody').append('<tr><td colspan="8" class="text-center text-muted fw-medium"> ' + errorResponse.message + ' </td></tr>');
                     }
                 })
             }
