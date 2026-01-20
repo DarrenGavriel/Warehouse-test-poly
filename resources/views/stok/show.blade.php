@@ -18,6 +18,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/transaksi/laporan">Transaksi</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/lokasi/master">Lokasi</a>
+                    </li>
                 </ul>
             </div>
         </div>
