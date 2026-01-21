@@ -19,4 +19,15 @@ class Barang extends Model
     {
         return $this->hasMany(RiwayatTransaksi::class, 'id_barang', 'id');
     }
+    public function getBarang($kode_barang = null, $nama_barang = null)
+    {
+        $query = self::select('*')
+            ->when($kode_barang, function ($query, $kode_barang){
+                return $query->orWhere('kode_barang', 'like', '%' . $kode_barang . '%');
+            })
+            ->when($nama_barang, function ($query, $nama_barang){
+                return $query->orWhere('nama_barang', 'like', '%' . $nama_barang . '%');
+            });
+        return $query;
+    }
 }
