@@ -21,6 +21,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/lokasi/master">Lokasi</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/barang/master">Barang</a>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -70,7 +73,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="filterModalLabel">Modal title</h1>
+                <h1 class="modal-title fs-5" id="filterModalLabel">Filter Stok</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             

@@ -21,6 +21,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/lokasi/master">Lokasi</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/barang/master">Barang</a>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -76,7 +79,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="filterModalLabel">Modal filter</h1>
+                    <h1 class="modal-title fs-5" id="filterModalLabel">Filter Transaksi</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 
@@ -98,14 +101,14 @@
                                     <input type="date" class="form-control" id="tanggal_transaksi" name="tanggal_transaksi" value="">
                                 </div>
                                 <h8 class="fw-bold mb-3">Formated</h8>
-                                <input class="form-control" type="text" id="tgl_transaksi_view" name="tgl_transaksi_view" value="" readonly>
+                                <input class="form-control" type="text" id="tgl_transaksi_view_filter" name="tgl_transaksi_view" value="" readonly>
                             </div>
                         </div>
                         <hr>
                         <div>
                             <h6 class="fw-bold mb-3">Filter Lokasi</h6>
                             <div id="lokasi-list">
-                                <div class="form-check">
+                                <div class="form-check" >
                                     <input class="form-check-input" type="radio" name="id_lokasi" id="lokasi_semua" value="" checked>
                                     <label class="form-check-label" for="lokasi_semua">
                                         Semua Lokasi
@@ -142,7 +145,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-create fs-5" id="filterModalLabel">Modal create</h1>
+                    <h1 class="modal-create fs-5" id="filterModalLabel">Buat Transaksi</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div id="error-500" class="alert alert-danger mx-3 mt-3" style="display: none;" role="alert"></div>
@@ -234,7 +237,7 @@
                                 <input class="form-control" type="datetime-local" id="tgl_transaksi" name="tgl_transaksi" value="">
                             </div>
                             <h8 class="fw-bold mb-3">Formated</h8>
-                            <input class="form-control" type="text" id="tgl_transaksi_view" name="tgl_transaksi_view" value="" readonly>
+                            <input class="form-control" type="text" id="tgl_transaksi_view_create" name="tgl_transaksi_view" value="" readonly>
                             <div class="text-danger small mt-1" id="error-tgl_transaksi" style="display: none;"></div>
                         </div>
                         <hr>
@@ -726,9 +729,9 @@
                         hour: '2-digit',
                         minute: '2-digit'
                     });
-                    $('#tgl_transaksi_view').val(formattedDate);
+                    $('#tgl_transaksi_view_create').val(formattedDate);
                 } else {
-                    $('#tgl_transaksi_view').val('');
+                    $('#tgl_transaksi_view_create').val('');
                 }
             })  
             $('#tanggal_transaksi').on('change', function() {
@@ -739,9 +742,9 @@
                         hour: '2-digit',
                         minute: '2-digit'
                     });
-                    $('#tgl_transaksi_view').val(formatDate(tglValue));
+                    $('#tgl_transaksi_view_filter').val(formattedDate);
                 } else {
-                    $('#tgl_transaksi_view').val('');
+                    $('#tgl_transaksi_view_filter').val('');
                 }
             })  
         })
