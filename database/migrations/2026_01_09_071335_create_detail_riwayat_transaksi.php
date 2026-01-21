@@ -32,6 +32,6 @@ class CreateDetailRiwayatTransaksi extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('detail_history_transaksi');
+        Schema::dropIfExists('detail_riwayat_transaksi');
     }
 }
