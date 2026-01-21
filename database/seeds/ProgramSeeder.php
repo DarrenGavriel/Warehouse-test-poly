@@ -12,9 +12,9 @@ class ProgramSeeder extends Seeder
      */
     public function run()
     {
-        Program::create(['nama_program' => 'Program 1']);
-        Program::create(['nama_program' => 'Program 2']);
-        Program::create(['nama_program' => 'Program 3']);
-        Program::create(['nama_program' => 'Program 4']);
+        Program::create(['nama_program' => 'PROGRAM 1']);
+        Program::create(['nama_program' => 'PROGRAM 2']);
+        Program::create(['nama_program' => 'PROGRAM 3']);
+        Program::create(['nama_program' => 'PROGRAM 4']);
     }
 }
