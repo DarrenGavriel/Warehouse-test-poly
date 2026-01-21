@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class LokasiController extends Controller
 {
@@ -15,7 +16,7 @@ class LokasiController extends Controller
     {
         $this->model = new Lokasi();
     }
-    public function getAll(Request $request)
+    public function getAll(Request $request): JsonResponse 
     {
         try {
             if ($request->master == 1) {
@@ -65,7 +66,7 @@ class LokasiController extends Controller
             ], 500);
         }
     }
-    public function createLokasi(Request $request)
+    public function createLokasi(Request $request): JsonResponse 
     {
         try {
             $validator = $this->validateRequest($request);
@@ -97,7 +98,8 @@ class LokasiController extends Controller
             ], 500);
         }
     }
-    public function deleteLokasi($id) {
+    public function deleteLokasi($id): JsonResponse 
+    {
         try {
             $data = $this->model->findOrFail($id);
             $data->delete();
@@ -120,7 +122,7 @@ class LokasiController extends Controller
             ], 500);
         }
     }
-    public function getLokasiById($id)
+    public function getLokasiById($id): JsonResponse 
     {
         try {
             $data = $this->model->findOrFail($id);
@@ -144,7 +146,7 @@ class LokasiController extends Controller
             ], 500);
         }
     }
-    public function updateLokasi(Request $request, $id)
+    public function updateLokasi(Request $request, $id): JsonResponse 
     {
         try {
             $validator = $this->validateRequest($request);
@@ -187,7 +189,7 @@ class LokasiController extends Controller
             'kode_lokasi' => 'required|string|max:50|unique:lokasi,kode_lokasi',
         ], [
             'nama_lokasi.required' => 'Nama lokasi wajib diisi',
-            'nama_lokasi.string' => 'Nama lokasi harus berupa string',
+            'nama_lokasi.string' => 'Nama lokasi harus berupa kata',
             'nama_lokasi.max' => 'Nama lokasi maksimal 100 karakter',
             'kode_lokasi.required' => 'Kode lokasi wajib diisi',
             'kode_lokasi.string' => 'Kode lokasi harus berupa string',
