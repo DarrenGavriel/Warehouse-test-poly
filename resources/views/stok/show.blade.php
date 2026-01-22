@@ -35,7 +35,7 @@
                     <div class="">
                         <h3 class="fw-bold">Laporan Stok</h3>
                     </div>
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#filterModal">Filter by</button>
+                    <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#filterModal">Filter by</button>
                 </div>
                 <div class="card shadow-sm">
                     <div class="table-responsive">
@@ -130,7 +130,7 @@
                         var tableBody = $('tbody');
                         //format angka ke format dengan separator koma
                         function toCommas(value){
-                            return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                            return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
                         }
                         //format tanggal ke format indonesia
                         function formatDate(dateString){
