@@ -141,7 +141,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal edit</button>
-                        <button type="submit" class="btn btn-primary">Perbarui lokasi</button>
+                        <button type="submit" class="btn btn-primary">Edit lokasi</button>
                     </div>
                 </form>
             </div>
@@ -166,9 +166,9 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="reset" class="btn btn-secondary">Clear</button>
-                        <button type="submit" class="btn btn-primary">Apply Filter</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                        <button type="reset" class="btn btn-secondary">Reset</button>
+                        <button type="submit" class="btn btn-primary">Terapkan Filter</button>
                     </div>
                 </form>
             </div>

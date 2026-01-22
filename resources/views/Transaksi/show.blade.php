@@ -132,9 +132,9 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="reset" class="btn btn-secondary">Clear</button>
-                        <button type="submit" class="btn btn-primary">Save changes</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutuk</button>
+                        <button type="reset" class="btn btn-secondary">Reset</button>
+                        <button type="submit" class="btn btn-primary">Terapkan Filter</button>
                     </div>
                 </form>
             </div>
