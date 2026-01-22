@@ -37,7 +37,7 @@
                         <h2 class="mb-0">Detail Transaksi</h2>
                     </div>
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#buatTransaksiModal">+ Buat Transaksi</button>
-                    <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#filterModal">Filter</button>
+                    <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#filterModal">Filter By</button>
                 </div>
                 <div class="card shadow-sm">
                     <div class="table-responsive">
@@ -244,7 +244,7 @@
                         <div>
                             <h6 class="fw-bold mb-3">Jumlah</h6>
                             <div class="mb-3">
-                                <input class="form-control" type="number" id="jumlah" name="quantity" value="0" onFocus="this.type='number'; this.value=this.lastValue" onBlur="this.type=''; this.lastValue=this.value; this.value=this.value==''?'':(+this.value).toLocaleString()" oninput="this.value = this.value.replace(/\D+/g, '')">
+                                <input class="form-control" type="number" id="jumlah" name="quantity" value="0" onFocus="this.type='number'; this.value=this.lastValue" onBlur="this.type=''; this.lastValue=this.value; this.value=this.value==''?'':(+this.value).toLocaleString('id-ID')" oninput="this.value = this.value.replace(/,/g, '')">
                             </div>
                             <div class="text-danger small mt-1" id="error-quantity" style="display: none;"></div>
                         </div>
@@ -283,7 +283,7 @@
                         tableBody.empty();
                         //format angka ke format dengan separator koma
                         function toCommas(value){
-                            return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                            return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
                         }
                         // console.log(response);
                         $.each(response.data.data, function(index, transaksi){
@@ -627,8 +627,10 @@
             })
             $('#createForm').on('submit', function(e){
                 e.preventDefault();
-                
+                var quantity = $(this).find('input[name="quantity"]').val().replace(/\./g, '');
+                // var quantity_format = quantity.replace('(?<=\d)(,)+(?=\d)');
                 // Sembunyikan semua error sebelumnya
+                // console.log(quantity);   
                 $('.text-danger').empty().hide();
                 $('#error-500').empty().hide();
                 $('#success').empty().hide();
@@ -637,7 +639,15 @@
                 $.ajax({
                     url: '/api/transaksi',
                     method: 'POST',
-                    data: formData,
+                    data: {
+                        jenis_transaksi: $(this).find('input[name="jenis_transaksi"]').val(),
+                        bukti: $(this).find('input[name="bukti"]').val(),
+                        id_lokasi: $(this).find('input[name="id_lokasi"]').val(),
+                        id_barang: $(this).find('input[name="id_barang"]').val(),
+                        id_program: $(this).find('input[name="id_program"]').val(),
+                        tgl_transaksi: $(this).find('input[name="tgl_transaksi"]').val(),
+                        quantity: quantity,
+                    },
                     success: function(response) {
                         fetchLaporanTransaksi();
                         var successAlert = $('#success');
