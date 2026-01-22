@@ -56,6 +56,7 @@ class RiwayatTransaksi extends Model
             return $query->where('riwayat_transaksi.id_lokasi', $id_lokasi);
         })
         ->groupBy('bukti', 'lokasi.kode_lokasi', 'barang.kode_barang', 'waktu_transaksi', 'stok.tanggal_masuk', 'program.nama_program')
+        ->orderBy('lokasi.kode_lokasi', 'asc')
         ->paginate(10);
         return $query;
     }
