@@ -22,7 +22,7 @@ class BarangController extends Controller
                 if ($request->has('search') && $request->search != '') {
                     $data = $this->model->getBarang($request->search, $request->search)->paginate(10);
                     } else {
-                        $data = $this->model->getBarang()->paginate(10);
+                        $data = $this->model->getBarang()->paginate(4);
                     }
                     if (count($data->items()) == 0) {
                         return response()->json([
@@ -98,7 +98,7 @@ class BarangController extends Controller
                     'success' => false,
                     'http_status' => 400,
                     'message' => 'Validasi gagal',
-                    'data' => $validator->errors()
+                    'errors' => $validator->errors()
                 ], 400);
             }
             $nama_barang = strtoupper($request->nama_barang);
@@ -154,7 +154,7 @@ class BarangController extends Controller
                     'success' => false,
                     'http_status' => 400,
                     'message' => 'Validasi gagal',
-                    'data' => $validator->errors()
+                    'errors' => $validator->errors()
                 ], 400);
             }
             $data = $this->model->findOrFail($id);
