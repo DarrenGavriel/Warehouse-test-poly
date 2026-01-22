@@ -636,11 +636,12 @@
                 $('#success').empty().hide();
                 
                 var formData = $(this).serialize();
+                // console.log($(this).find('input[name="jenis_transaksi"]:checked').val());
                 $.ajax({
                     url: '/api/transaksi',
                     method: 'POST',
                     data: {
-                        jenis_transaksi: $(this).find('input[name="jenis_transaksi"]').val(),
+                        jenis_transaksi: $(this).find('input[name="jenis_transaksi"]:checked').val(),
                         bukti: $(this).find('input[name="bukti"]').val(),
                         id_lokasi: $(this).find('input[name="id_lokasi"]').val(),
                         id_barang: $(this).find('input[name="id_barang"]').val(),
