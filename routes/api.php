@@ -14,12 +14,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::get('/lokasi', 'LokasiController@getAll');
-// Route::get('/barang', 'BarangController@getAll');
 Route::get('/program', 'ProgramController@getAll');
 Route::prefix('stok')->group(function () {
     Route::get('/', 'StokController@getAll');
-    // Route::get('/check', 'StokController@checkStok');
     Route::get('/laporan', 'StokController@getLaporanStok');
 });
 Route::prefix('transaksi')->group(function () {
