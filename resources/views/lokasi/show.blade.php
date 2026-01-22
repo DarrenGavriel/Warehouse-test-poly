@@ -36,8 +36,8 @@
                     <div>
                         <h3 class="fw-bold">Lokasi Master</h3>
                     </div>
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#buatLokasiModal">Tambah Lokasi</button>
-                    <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#filterLokasiModal">Filter Lokasi</button>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#buatLokasiModal">+ Tambah Lokasi</button>
+                    <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#filterLokasiModal">Filter By</button>
                 </div>
                 <div class="card shadow-sm">
                     <div class="table-responsive">
@@ -219,7 +219,7 @@
                                 '<td>' + formatDate(lokasi.created_at)  + '</td>' +
                                 '<td>' +
                                     '<button class="btn btn-sm btn-warning me-2 edit-button" data-edit-id="' + lokasi.id + '" data-bs-toggle="modal" data-bs-target="#editLokasiModal">Edit</button>' +
-                                    '<button class="btn btn-sm btn-danger" data-id="' + lokasi.id + '">Hapus</button>' +
+                                    '<button class="btn btn-sm btn-danger" data-id="' + lokasi.id + '" id="delete-button">Hapus</button>' +
                                 '</td>' +
                             '</tr>';
                             tbody.append(row);
@@ -324,14 +324,23 @@
                 $('.text-danger').empty().hide();
                 $('#error-500').hide().empty(); 
             });
-            $('tbody').on('click', '.btn-danger', function() {
+            $('tbody').on('click', '#delete-button', function() {
                 var lokasiId = $(this).data('id');
+                var currentPage = new URLSearchParams(window.location.search).get('page') || 1;
+                var jumlahItem = $('tbody tr').length;
                 if (confirm('Apakah Anda yakin ingin menghapus lokasi ini?')) {
                     $.ajax({
                         url: '/api/lokasi/' + lokasiId,
                         method: 'DELETE',
                         success: function(response) {
-                            fetchLokasi();
+                            if(jumlahItem == 1 && currentPage > 1) {
+                                var url = new URLSearchParams(window.location.search);
+                                url.set('page', currentPage - 1);
+                                window.history.pushState({}, '', '?' + url.toString());
+                                fetchLokasi();
+                            } else {
+                                fetchLokasi();
+                            }
                             var successAlert = $('#success');
                             successAlert.empty();
                             successAlert.append(response.message).show();
