@@ -34,8 +34,7 @@ class RiwayatTransaksi extends Model
             'barang.kode_barang as kode_barang',
             'program.nama_program as program'
         ])
-        ->selectRaw('DATE(waktu_transaksi) as tanggal_transaksi, 
-                    TIME(waktu_transaksi) as jam_transaksi,
+        ->selectRaw('waktu_transaksi as tanggal_transaksi, 
                     SUM(detail_riwayat_transaksi.jumlah_transaksi) as total_transaksi,
                     DATE(stok.tanggal_masuk) as tanggal_masuk')
         ->join('lokasi', 'riwayat_transaksi.id_lokasi', '=', 'lokasi.id')
