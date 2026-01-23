@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Lokasi;
+use App\RiwayatTransaksi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
@@ -32,6 +33,18 @@ class LokasiController extends Controller
                             'message' => 'Lokasi tidak ditemukan',
                         ], 404);
                     }
+                    
+                    // Tambahkan info apakah lokasi sudah digunakan di transaksi
+                    $lokasiIds = $data->pluck('id')->toArray();
+                    $usedLokasiIds = RiwayatTransaksi::whereIn('id_lokasi', $lokasiIds)
+                        ->pluck('id_lokasi')
+                        ->unique()
+                        ->toArray();
+                    
+                    foreach ($data->items() as $lokasi) {
+                        $lokasi->is_used = in_array($lokasi->id, $usedLokasiIds);
+                    }
+                    
                     return response()->json([
                         'success' => true,
                         'http_status' => 200,
@@ -101,6 +114,15 @@ class LokasiController extends Controller
     public function deleteLokasi($id): JsonResponse 
     {
         try {
+            $riwayat_transaksi = new RiwayatTransaksi();
+            $cek_lokasi = $riwayat_transaksi->getLaporanTransaksi(null, null, null, $id);
+            if (count($cek_lokasi) > 0) {
+                return response()->json([
+                    'success' => false,
+                    'http_status' => 400,
+                    'message' => 'Lokasi tidak dapat dihapus karena sudah dipakai untuk transaksi',
+                ], 400);
+            }
             $data = $this->model->findOrFail($id);
             $data->delete();
             return response()->json([
