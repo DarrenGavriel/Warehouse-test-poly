@@ -158,6 +158,20 @@
             var error_nama_barang = $('#error-nama-barang');
             var error_general = $('#error');
             var success = $('#success');
+            function formatDate(dateString){
+                var date = new Date(dateString);
+                var formattedDate = date.toLocaleDateString('id-ID', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                });
+                var formattedTime = date.toLocaleTimeString('id-ID', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                });
+                return formattedDate + ' ' + formattedTime;
+            }
             function fetchBarang(){
                 var currentPage = new URLSearchParams(window.location.search).get('page') || 1;
                 var searchParams = window.location.search;
@@ -178,9 +192,14 @@
                                 '<td>' + number + '</td>' +
                                 '<td>' + barang.kode_barang + '</td>' +
                                 '<td>' + barang.nama_barang + '</td>' +
-                                '<td>' + barang.created_at + '</td>' +
-                                '<td><button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editBarangModal" data-id="' + barang.id + '" id="edit-button">Edit</button> ' +
-                                '<button class="btn btn-sm btn-danger" id="delete-button" data-id="' + barang.id + '">Hapus</button></td>' +
+                                '<td>' + formatDate(barang.created_at) + '</td>' +
+                                '<td><button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editBarangModal" data-id="' + barang.id + '" id="edit-button">Edit</button> ';
+                                if(barang.is_used){
+                                    // row += '<button class="btn btn-sm btn-danger" id="delete-button" data-id="' + barang.id + '" disabled>Hapus</button></td>';
+                                    row += '</td>';
+                                } else {
+                                    row += '<button class="btn btn-sm btn-danger" id="delete-button" data-id="' + barang.id + '">Hapus</button></td>';
+                                }
                                 '</tr>';
                             tbody.append(row);
                         });
