@@ -49,7 +49,6 @@
                                         <th>kode lokasi</th>
                                         <th>kode barang</th>
                                         <th>tanggal transaksi</th>
-                                        <th>jam transaksi</th>
                                         <th class="text-end">total transaksi</th>
                                         <th>tanggal masuk</th>
                                         <th>program</th>
@@ -267,7 +266,9 @@
                 return date.toLocaleDateString('id-ID', {
                     year: 'numeric',
                     month: '2-digit',
-                    day: '2-digit'
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
                 });
             }
             var debounceTimer;
@@ -292,7 +293,6 @@
                                 '<td>' + transaksi.kode_lokasi + '</td>' +
                                 '<td>' + transaksi.kode_barang + '</td>' +
                                 '<td>' + formatDate(transaksi.tanggal_transaksi) + '</td>' +
-                                '<td>' + transaksi.jam_transaksi + '</td>' +
                                 '<td class="text-end">' + toCommas(transaksi.total_transaksi) + '</td>' +
                                 '<td>' + formatDate(transaksi.tanggal_masuk) + '</td>' +
                                 '<td>' + transaksi.program + '</td>' +
@@ -348,7 +348,7 @@
                         $('tbody').empty();
                             $('#info').empty();
                             $('.pagination').empty();
-                            $('tbody').append('<tr><td colspan="8" class="text-center text-muted fw-medium"> ' + errorResponse.message + ' </td></tr>');
+                            $('tbody').append('<tr><td colspan="7" class="text-center text-muted fw-medium"> ' + errorResponse.message + ' </td></tr>');
                     }
                 })
             }
