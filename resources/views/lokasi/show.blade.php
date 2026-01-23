@@ -29,6 +29,7 @@
         </div>
     </nav>
     <div id="success" class="alert alert-success mx-3 mt-3" style="display: none;" role="alert"></div>
+    <div id="error-general" class="alert alert-danger mx-3 mt-3" style="display: none;" role="alert"></div>
     <div class="container py-5">
         <div class="row">
             <div class="col-12">
@@ -188,7 +189,7 @@
                     month: '2-digit',
                     day: '2-digit',
                 });
-                var formattedTime = date.toLocaleTimeString('en-EN', {
+                var formattedTime = date.toLocaleTimeString('id-ID', {
                     hour: '2-digit',
                     minute: '2-digit',
                     second: '2-digit',
@@ -211,17 +212,21 @@
                         var perPage = response.data.per_page;
                         $.each(response.data.data, function(index, lokasi) {
                             var number = (currentPaginationPage - 1) * perPage + index + 1;
-                            // var number = 1000000;
                             var row = '<tr>' +
                                 '<td>' + toCommas(number) + '</td>' +
                                 '<td>' + lokasi.kode_lokasi + '</td>' +
                                 '<td>' + lokasi.nama_lokasi + '</td>' +
                                 '<td>' + formatDate(lokasi.created_at)  + '</td>' +
                                 '<td>' +
-                                    '<button class="btn btn-sm btn-warning me-2 edit-button" data-edit-id="' + lokasi.id + '" data-bs-toggle="modal" data-bs-target="#editLokasiModal">Edit</button>' +
-                                    '<button class="btn btn-sm btn-danger" data-id="' + lokasi.id + '" id="delete-button">Hapus</button>' +
-                                '</td>' +
-                            '</tr>';
+                                    '<button class="btn btn-sm btn-warning me-2 edit-button" data-edit-id="' + lokasi.id + '" data-bs-toggle="modal" data-bs-target="#editLokasiModal">Edit</button>';
+                                    // Cek dari backend apakah lokasi sudah digunakan
+                                    if (lokasi.is_used) {
+                                        // row += '<button class="btn btn-sm btn-danger delete-button" data-id="' + lokasi.id + '" disabled>Hapus</button>';
+                                        row += '';
+                                    } else {
+                                        row += '<button class="btn btn-sm btn-danger delete-button" data-id="' + lokasi.id + '">Hapus</button>';
+                                    }
+                                row += '</td>' + '</tr>';
                             tbody.append(row);
                         });
                         var information = $('#info');
@@ -347,7 +352,10 @@
                         },
                         error: function(xhr) {
                             var errorResponse = xhr.responseJSON;
-                            alert('Gagal menghapus lokasi: ' + errorResponse.message);
+                            var errorGeneral = $('#error-general');
+                            errorGeneral.empty();
+                            errorGeneral.append(errorResponse.message).show();
+                            // alert('Gagal menghapus lokasi: ' + errorResponse.message);
                         }
                     });
                 }
