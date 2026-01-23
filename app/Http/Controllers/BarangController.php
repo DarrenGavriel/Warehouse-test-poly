@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Barang;
+use App\RiwayatTransaksi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -30,6 +31,14 @@ class BarangController extends Controller
                             'http_status' => 404,
                             'message' => 'Barang tidak ditemukan',
                         ], 404);
+                    }
+                    $id_barang = $data->pluck('id')->toArray();
+                    $cek_barang = RiwayatTransaksi::whereIn('id_barang', $id_barang)
+                        ->pluck('id_barang')
+                        ->unique()
+                        ->toArray();
+                    foreach ($data->items() as $barang){
+                        $barang->is_used = in_array($barang->id, $cek_barang);
                     }
                     return response()->json([
                         'success' => true,
@@ -124,12 +133,21 @@ class BarangController extends Controller
     public function deleteBarang($id): JsonResponse
     {
         try {
+            $riwayat_transaksi = new RiwayatTransaksi();
+            $cek_barang = $riwayat_transaksi->getLaporanTransaksi(null, null, $id, null);
+            if (count($cek_barang) > 0) {
+                return response()->json ([
+                    'success' => false,
+                    'http_status' => 400,
+                    'message' => 'Barang tidak dapat dihapus karena sudah dipakai untuk transaksi',
+                ], 400);
+            }
             $data = $this->model->findOrFail($id);
             $data->delete();
             return response()->json([
                 'success' => true,
                 'http_status' => 200,
-                'message' => 'barang berhasil dihapus'
+                'message' => 'Barang berhasil dihapus'
             ], 200);
         } catch (ModelNotFoundException $e) {
             return response()->json([
