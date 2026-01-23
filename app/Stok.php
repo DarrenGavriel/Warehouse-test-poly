@@ -49,7 +49,9 @@ class Stok extends Model
         ->where('id_lokasi', $id_lokasi)
         ->groupBy('tanggal_masuk', 'id', 'id_lokasi')
         ->havingRaw('sum(saldo) != 0')
-        ->orderBy('tanggal_masuk', 'asc')->get();
+        ->orderBy('tanggal_masuk', 'asc')
+        ->lockForUpdate()
+        ->get();
         return $query;
     }
     public function laporanStok($id_barang = null, $id_lokasi = null)
