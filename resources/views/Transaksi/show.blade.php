@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/transaksi/show.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <title>Laporan Transaksi</title>
 </head>
 <body>
@@ -97,10 +98,8 @@
                             <h6 class="fw-bold mb-3">Filter Tanggal Transaksi</h6>
                             <div id="tanggal-transaksi-list">
                                 <div class="form-check p-0">
-                                    <input type="date" class="form-control" id="tanggal_transaksi" name="tanggal_transaksi" value="">
+                                    <input type="text" class="form-control" id="tanggal_transaksi" name="tanggal_transaksi" value="" placeholder="Pilih tanggal...">
                                 </div>
-                                <h8 class="fw-bold mb-3">Formated</h8>
-                                <input class="form-control" type="text" id="tgl_transaksi_view_filter" name="tgl_transaksi_view" value="" readonly>
                             </div>
                         </div>
                         <hr>
@@ -165,7 +164,7 @@
                             </div>
                             <div class="text-danger small mt-1" id="error-jenis_transaksi" style="display: none;"></div>
                         </div>
-                        <hr>
+                        <!-- <hr>
                         <div>
                             <h6 class="fw-bold mb-3">Bukti Transaksi</h6>
                             <div id="bukti_list">
@@ -174,7 +173,7 @@
                                 </div>
                             </div>
                             <div class="text-danger small mt-1" id="error-bukti" style="display: none;"></div>
-                        </div>
+                        </div> -->
                         <hr>
                         <div>
                             <h6 class="fw-bold mb-3">Kode Lokasi</h6>
@@ -233,17 +232,15 @@
                         <div>
                             <h6 class="fw-bold mb-3">Tanggal Transaksi</h6>
                             <div class="mb-3">
-                                <input class="form-control" type="datetime-local" id="tgl_transaksi" name="tgl_transaksi" value="">
+                                <input class="form-control" type="text" id="tgl_transaksi" name="tgl_transaksi" value="" placeholder="Pilih tanggal dan waktu...">
                             </div>
-                            <h8 class="fw-bold mb-3">Formated</h8>
-                            <input class="form-control" type="text" id="tgl_transaksi_view_create" name="tgl_transaksi_view" value="" readonly>
                             <div class="text-danger small mt-1" id="error-tgl_transaksi" style="display: none;"></div>
                         </div>
                         <hr>
                         <div>
                             <h6 class="fw-bold mb-3">Jumlah</h6>
                             <div class="mb-3">
-                                <input class="form-control" type="number" id="jumlah" name="quantity" value="0" onFocus="this.type='number'; this.value=this.lastValue" onBlur="this.type=''; this.lastValue=this.value; this.value=this.value==''?'':(+this.value).toLocaleString('id-ID')" oninput="this.value = this.value.replace(/,/g, '')">
+                                <input class="form-control" type="number" id="jumlah" name="quantity" value="0" onFocus="this.type='number'; this.value=this.lastValue" onBlur="this.type=''; this.lastValue=this.value; this.value=this.value==''?'':(+this.value).toLocaleString('id-ID')" oninput="this.value = this.value.replace(/,/g, '')" autocomplete="off">
                             </div>
                             <div class="text-danger small mt-1" id="error-quantity" style="display: none;"></div>
                         </div>
@@ -259,17 +256,24 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/id.js"></script>
     <script>
         $(document).ready(function() {
             function formatDate(dateString){
                 var date = new Date(dateString);
-                return date.toLocaleDateString('id-ID', {
+                var formattedDate = date.toLocaleDateString('id-ID', {
                     year: 'numeric',
                     month: '2-digit',
                     day: '2-digit',
+                });
+                var formattedTime = date.toLocaleTimeString('en-EN', {
                     hour: '2-digit',
                     minute: '2-digit',
+                    second: '2-digit',
+                    hourCycle: 'h23',
                 });
+                return formattedDate + ' ' + formattedTime;
             }
             var debounceTimer;
             // buat mengambil dan menampilkan data riwayat transaksi
@@ -607,6 +611,22 @@
             LoadDataBarangModal();
             LoadDataProgramModal();
             
+            // Inisialisasi flatpickr untuk filter tanggal
+            flatpickr("#tanggal_transaksi", {
+                locale: "id",
+                dateFormat: "d/m/Y",
+                allowInput: true
+            });
+            
+            // Inisialisasi flatpickr untuk tanggal transaksi di form create
+            flatpickr("#tgl_transaksi", {
+                enableTime: true,
+                time_24hr: true,
+                locale: "id",
+                dateFormat: "d/m/Y H:i",
+                allowInput: true
+            });
+            
             $('#filterForm').submit(function(e){
                 e.preventDefault();
                 $('.text-danger').empty().hide();
@@ -731,32 +751,6 @@
                 $('#id_lokasi_modal').val(null);
                 $('#id_barang_modal').val(null);
                 $('#id_program_modal').val(null);
-            })
-            $('#tgl_transaksi').on('change', function() {
-                var tglValue = $(this).val();
-                if(tglValue){
-                    var date = new Date(tglValue);
-                    var formattedDate = formatDate(date) + ' ' + date.toLocaleTimeString('id-ID', {
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    });
-                    $('#tgl_transaksi_view_create').val(formattedDate);
-                } else {
-                    $('#tgl_transaksi_view_create').val('');
-                }
-            })  
-            $('#tanggal_transaksi').on('change', function() {
-                var tglValue = $(this).val();
-                if(tglValue){
-                    var date = new Date(tglValue);
-                    var formattedDate = formatDate(date) + ' ' + date.toLocaleTimeString('id-ID', {
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    });
-                    $('#tgl_transaksi_view_filter').val(formattedDate);
-                } else {
-                    $('#tgl_transaksi_view_filter').val('');
-                }
             })  
         })
     </script>
