@@ -72,4 +72,22 @@ class Stok extends Model
             ->paginate(5);
         return $query;
     }
+    public function laporanStok_dt($id_barang = null, $id_lokasi = null)
+    {
+        $query = self::select('barang.kode_barang', 'barang.nama_barang', 'lokasi.kode_lokasi', 'stok.tanggal_masuk')
+            ->selectRaw('SUM(stok.saldo) as total_saldo')
+            ->join('barang', 'stok.id_barang', '=', 'barang.id')
+            ->join('lokasi', 'stok.id_lokasi', '=', 'lokasi.id')
+            
+            ->when($id_barang, function ($query, $id_barang){
+                return $query->where('barang.id', $id_barang);
+            })
+            ->when($id_lokasi, function ($query, $id_lokasi){
+                return $query->where('lokasi.id', $id_lokasi);
+            })
+            ->groupBy('barang.kode_barang', 'lokasi.kode_lokasi', 'barang.nama_barang', 'stok.tanggal_masuk')
+            ->havingRaw('SUM(stok.saldo) > 0')
+            ->get();
+        return $query;
+    }
 }
