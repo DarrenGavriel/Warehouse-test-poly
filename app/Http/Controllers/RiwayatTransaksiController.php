@@ -22,9 +22,18 @@ class RiwayatTransaksiController extends Controller
     public function getLaporanTransaksi(Request $request)
     {
         try {
+            // Konversi format tanggal dari d/m/Y ke Y-m-d jika ada
+            $tanggalTransaksi = $request->input('tanggal_transaksi');
+            if ($tanggalTransaksi) {
+                $dateTime = \DateTime::createFromFormat('d/m/Y', $tanggalTransaksi);
+                if ($dateTime) {
+                    $tanggalTransaksi = $dateTime->format('Y-m-d');
+                }
+            }
+            
             $data = $this->model->getLaporanTransaksi(
                 $request->input('bukti'),
-                $request->input('tanggal_transaksi'),
+                $tanggalTransaksi,
                 $request->input('id_barang'),
                 $request->input('id_lokasi')
             );
@@ -55,10 +64,18 @@ class RiwayatTransaksiController extends Controller
             // Konversi string kosong jadi null
             $input = $request->all();
             $request->merge($input);
-            // Mengganti T pada tanggal transaksi dengan spasi
-            $request->merge([
-                'tgl_transaksi' => str_replace('T', ' ', $request->tgl_transaksi)
-            ]);
+            
+            // Konversi format tanggal dari d/m/Y H:i ke Y-m-d H:i
+            if ($request->tgl_transaksi) {
+                $tgl = $request->tgl_transaksi;
+                // Parse format Indonesia: 26/01/2026 14:30
+                $dateTime = \DateTime::createFromFormat('d/m/Y H:i', $tgl);
+                if ($dateTime) {
+                    $request->merge([
+                        'tgl_transaksi' => $dateTime->format('Y-m-d H:i')
+                    ]);
+                }
+            }
             
             // input di validasi
             $validator = $this->validateInsert($request);
@@ -76,7 +93,7 @@ class RiwayatTransaksiController extends Controller
             $id_program = $request->id_program;
             $tgl_transaksi = $request->tgl_transaksi;
             $quantity = $request->quantity;
-            $bukti = strtoupper($request->bukti);
+            
             // ini buat validasi tanggal transaksi dan total saldo
             $stok = new Stok();
             $total = $stok->totalStok($id_barang, $id_lokasi);
@@ -87,14 +104,16 @@ class RiwayatTransaksiController extends Controller
                 $total_saldo = $total->total_saldo;
                 $terakhir_masuk = $total->terakhir_masuk;
             }
-            $check_bukti = RiwayatTransaksi::where('bukti', $bukti)->first();
-            if ($check_bukti) {
-                return response()->json([
-                    'success' => false,
-                    'http_status' => 400,
-                    'message' => 'Bukti transaksi sudah digunakan',
-                ], 400);
-            }
+
+            // $check_bukti = RiwayatTransaksi::where('bukti', $bukti)->first();
+            // if ($check_bukti) {
+            //     return response()->json([
+            //         'success' => false,
+            //         'http_status' => 400,
+            //         'message' => 'Bukti transaksi sudah digunakan',
+            //     ], 400);
+            // }
+
             // Cek tanggal transaksi harus setelah tanggal terakhir masuk
             if ($terakhir_masuk != null && $terakhir_masuk > $tgl_transaksi) {
                 return response()->json([
@@ -114,13 +133,13 @@ class RiwayatTransaksiController extends Controller
                 DB::transaction(function () use (
                     $jenis_transaksi,
                     $tgl_transaksi,
-                    $bukti,
                     $id_barang,
                     $id_lokasi,
                     $id_program,
                     $quantity,
                     $stok
                 ){
+                    $bukti = $this->generateBukti($jenis_transaksi);
                     $createRiwayat = RiwayatTransaksi::create([
                         'waktu_transaksi' => $tgl_transaksi,
                         'bukti' => $bukti,
@@ -203,13 +222,73 @@ class RiwayatTransaksiController extends Controller
             ], 500);
         };
     }
+    private function generateBukti($jenis_transaksi)
+    {
+        $jenis = $jenis_transaksi;
+        if ($jenis == 'masuk') {
+            $bukti_prefix = 'TAMBAH';
+        } else if ($jenis == 'keluar') {
+            $bukti_prefix = 'KELUAR';
+        }
+        
+        // mengambil bukti terakhir dari jenis transaksi yang sama
+        $lastBukti = $this->model->getRiwayatTransaksiByBukti($bukti_prefix);
+        // kita mengecek apakah ada bukti terakhir
+        // if ($lastBukti != null) {
+        //     // kalau ada kita ambil angkanya saja (ex. "TAMBAH123" -> 123)
+        //     $lastNumber = count($lastBukti) > 0;
+        //     $newNumber = $lastNumber + 1;
+        // } else {
+        //     // Disini kalau gak ada, berarti ini bukti pertama
+        //     $newNumber = 1;
+        // }
+        
+        $lastNumber = count($lastBukti);
+        $newNumber = $lastNumber + 1;
+        $bukti = $bukti_prefix . $newNumber;
+        return $bukti;
+    }
+    public function getAllRiwayatTransaksi(Request $request)
+    {
+        try {
+            $id_lokasi = $request->id_lokasi;
+            $id_barang = $request->id_barang;
+            $data = $this->model->with(['lokasi', 'barang'])
+                ->when($id_lokasi, function($q) use ($id_lokasi){
+                    $q->where('id_lokasi', $id_lokasi);
+                })
+                ->when($id_barang, function($q) use ($id_barang) {
+                    $q->where('id_barang', $id_barang);
+                })
+                ->get();
+            if (!$data || $data->isEmpty()) {
+                return response()->json([
+                    'success' => false,
+                    'http_status' => 404,
+                    'message' => 'Riwayat transaksi tidak ditemukan',
+                ], 404);
+            }
+            return response()->json([
+                'success' => true,
+                'http_status' => 200,
+                'message' => 'Berhasil mendapatkan riwayat transaksi',
+                'data' => $data
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'http_status' => 500,
+                'message' => 'Gagal mendapatkan riwayat transaksi error: '.$e->getMessage(),
+            ], 500);
+        }
+    }
     // buat validasi input user pada buat transaksi
     private function validateInsert(Request $request)
     {
         return Validator::make($request->all(), 
         [
             'jenis_transaksi' => 'required|string|in:masuk,keluar',
-            'bukti' => 'required|string|max:15',
+            'bukti' => ' nullable|string|max:15',
             'id_lokasi' => 'required|integer|exists:lokasi,id',
             'id_barang' => 'required|integer|exists:barang,id',
             'tgl_transaksi' => 'required|date|date_format:Y-m-d H:i',
