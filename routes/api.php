@@ -23,6 +23,7 @@ Route::prefix('transaksi')->group(function () {
     Route::get('/', 'RiwayatTransaksiController@getAll');
     Route::post('/', 'RiwayatTransaksiController@insert');
     Route::get('/laporan', 'RiwayatTransaksiController@getLaporanTransaksi');
+    Route::get('/laporan/eager', 'RiwayatTransaksiController@getAllRiwayatTransaksi');
 });
 Route::prefix('lokasi')->group(function () {
     Route::get('/', 'LokasiController@getAll');
