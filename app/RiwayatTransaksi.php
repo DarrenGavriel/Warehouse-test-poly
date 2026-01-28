@@ -26,6 +26,34 @@ class RiwayatTransaksi extends Model
     {
         return $this->belongsTo(Program::class, 'id_program', 'id');
     }
+    public function scopeManyStock($query, $total) {
+        return $query->with(['lokasi', 'barang', 'program', 'detailRiwayatTransaksi' => function($q) use ($total) {
+            $q->with('stok');
+            $q->whereHas('stok', function($sq) use ($total) {
+                $sq->where('saldo', '>=', $total);
+            });
+        }])
+        ->whereHas('detailRiwayatTransaksi.stok', function($sq) use ($total) {
+            $sq->where('saldo', '>=', $total);
+        });
+    }
+    public function scopeWhereLokasi($query, $id_lokasi) {
+        return $query->whereHas('lokasi', function($q) use ($id_lokasi) {
+            $q->where('id', $id_lokasi);
+        })
+        ->with ('lokasi');
+    }
+    public function scopeWhereBarang($query, $id_barang) {
+        return $query->when($id_barang, function($q) use ($id_barang) {
+            $q->whereHas('barang', function($sq) use ($id_barang) {
+                $sq->where('id', $id_barang);
+            });
+        });
+    }
+    public function getLaporanTransaksi_eager(){
+        $query = $this::with('lokasi', 'barang', 'program', 'detailRiwayatTransaksi', 'detailRiwayatTransaksi.stok');
+        return $query->get();
+    }
     public function getLaporanTransaksi($bukti = null, $tanggal_transaksi = null, $id_barang = null, $id_lokasi = null)
     {
         $query = $this::select([
@@ -58,5 +86,12 @@ class RiwayatTransaksi extends Model
         // ->orderBy('lokasi.kode_lokasi', 'asc')
         ->paginate(10);
         return $query;
+    }
+    public function getRiwayatTransaksiByBukti($bukti)
+    {
+        return $this->where('bukti', 'like', '%' . $bukti . '%')
+        ->lockForUpdate()
+        ->orderBy('bukti', 'asc')
+        ->get();
     }
 }
