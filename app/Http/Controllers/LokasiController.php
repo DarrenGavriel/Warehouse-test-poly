@@ -62,7 +62,16 @@ class LokasiController extends Controller
                             ], 404);
                         } 
                     } else {
-                        $data = $this->model->getLokasi()->limit(15)->get();
+                        $data = $this->model->getLokasi()->get();
+                    }
+                    $lokasiIds = $data->pluck('id')->toArray();
+                    $usedLokasiIds = RiwayatTransaksi::whereIn('id_lokasi', $lokasiIds)
+                        ->pluck('id_lokasi')
+                        ->unique()
+                        ->toArray();
+                    
+                    foreach ($data as $lokasi) {
+                        $lokasi->is_used = in_array($lokasi->id, $usedLokasiIds);
                     }
                     return response()->json([
                         'success' => true,

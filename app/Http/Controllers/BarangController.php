@@ -48,7 +48,7 @@ class BarangController extends Controller
                     ], 200);
             } else {
                 if ($request->has('search') && $request->search != '') {
-                    $data = $this->model->getBarang($request->search, $request->search)->limit(10)->get();
+                    $data = $this->model->getBarang($request->search, $request->search)->get();
                 } else {
                     $data = $this->model->getBarang()->get();
                 }
@@ -59,6 +59,14 @@ class BarangController extends Controller
                         'message' => 'Barang tidak ditemukan',
                     ], 404);
                 }
+                $id_barang = $data->pluck('id')->toArray();
+                    $cek_barang = RiwayatTransaksi::whereIn('id_barang', $id_barang)
+                        ->pluck('id_barang')
+                        ->unique()
+                        ->toArray();
+                    foreach ($data as $barang){
+                        $barang->is_used = in_array($barang->id, $cek_barang);
+                    }
                 return response()->json([
                     'success' => true,
                     'http_status' => 200,
@@ -71,7 +79,7 @@ class BarangController extends Controller
             return response()->json([
                 'success' => false,
                 'http_status' => 500,
-                'message' => 'Gagal mengambil barang',
+                'message' => 'Gagal mengambil barang' . $e->getMessage(),
             ], 500);
         }
     }
