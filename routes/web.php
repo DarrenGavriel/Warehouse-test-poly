@@ -12,17 +12,20 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('Stok.show');
+    return view('Stok.show_dt');
 });
 Route::get('/stok/laporan', function () {
-    return view('Stok.show');
+    return view('Stok.show_dt');
 });
 Route::get('/transaksi/laporan', function () {
     return view('Transaksi.show');
 });
 Route::get('/lokasi/master', function () {
-    return view('Lokasi.show');
+    return view('Lokasi.show_dt');
 });
 Route::get('/barang/master', function () {
-    return view('Barang.show');
+    return view('Barang.show_dt');
+});
+Route::get('/test', function () {
+    return view('test');
 });
