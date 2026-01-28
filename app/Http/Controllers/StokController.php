@@ -62,7 +62,8 @@ class StokController extends Controller
         try {
             $id_barang = $request->id_barang;
             $id_lokasi = $request->id_lokasi;
-            $data = $this->model->laporanStok($id_barang, $id_lokasi);
+            // $data = $this->model->laporanStok($id_barang, $id_lokasi);
+            $data = $this->model->laporanStok_dt($id_barang, $id_lokasi);
             if (count($data) == 0) {
                 return response()->json([
                     'success' => false,
