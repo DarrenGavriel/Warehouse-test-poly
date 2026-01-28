@@ -329,7 +329,7 @@
                 $('.text-danger').empty().hide();
                 $('#error-500').hide().empty(); 
             });
-            $('tbody').on('click', '#delete-button', function() {
+            $('tbody').on('click', '.delete-button', function() {
                 var lokasiId = $(this).data('id');
                 var currentPage = new URLSearchParams(window.location.search).get('page') || 1;
                 var jumlahItem = $('tbody tr').length;
