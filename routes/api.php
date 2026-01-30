@@ -18,24 +18,25 @@ Route::get('/program', 'ProgramController@getAll');
 Route::prefix('stok')->group(function () {
     Route::get('/', 'StokController@getAll');
     Route::get('/laporan', 'StokController@getLaporanStok');
+    Route::get('/laporan/eager', 'StokController@getStokEager');
 });
-Route::prefix('transaksi')->group(function () {
-    Route::get('/', 'RiwayatTransaksiController@getAll');
-    Route::post('/', 'RiwayatTransaksiController@insert');
-    Route::get('/laporan', 'RiwayatTransaksiController@getLaporanTransaksi');
-    Route::get('/laporan/eager', 'RiwayatTransaksiController@getAllRiwayatTransaksi');
+Route::prefix('transaksi')->name('transaksi.')->group(function () {
+    Route::get('/', 'RiwayatTransaksiController@getAll')->name('index');
+    Route::post('/', 'RiwayatTransaksiController@insert')->name('store');
+    Route::get('/laporan', 'RiwayatTransaksiController@getLaporanTransaksi')->name('laporan');
+    Route::get('/laporan/eager', 'RiwayatTransaksiController@getAllRiwayatTransaksi')->name('laporan.eager');
 });
-Route::prefix('lokasi')->group(function () {
-    Route::get('/', 'LokasiController@getAll');
-    Route::post('/', 'LokasiController@createLokasi');
-    Route::delete('/{id}', 'LokasiController@deleteLokasi');
-    Route::put('/{id}', 'LokasiController@updateLokasi');
-    Route::get('/{id}', 'LokasiController@getLokasiById');
+Route::prefix('lokasi')->name('lokasi.')->group(function () {
+    Route::get('/', 'LokasiController@getAll')->name('index');
+    Route::post('/', 'LokasiController@createLokasi')->name('store');
+    Route::delete('/{id}', 'LokasiController@deleteLokasi')->name('destroy');
+    Route::put('/{id}', 'LokasiController@updateLokasi')->name('update');
+    Route::get('/{id}', 'LokasiController@getLokasiById')->name('show');
 });
-Route::prefix('barang')->group(function () {
-    Route::get('/', 'BarangController@getAll');
-    Route::post('/', 'BarangController@insert');
-    Route::delete('/{id}', 'BarangController@deleteBarang');
-    Route::put('/{id}', 'BarangController@updateBarang');
-    Route::get('/{id}', 'BarangController@getById');
+Route::prefix('barang')->name('barang.')->group(function () {
+    Route::get('/', 'BarangController@getAll')->name('index');
+    Route::post('/', 'BarangController@insert')->name('store');
+    Route::delete('/{id}', 'BarangController@deleteBarang')->name('destroy');
+    Route::put('/{id}', 'BarangController@updateBarang')->name('update');
+    Route::get('/{id}', 'BarangController@getById')->name('show');
 });
