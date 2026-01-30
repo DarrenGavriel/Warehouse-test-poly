@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/barang/show.css') }}">
     <link rel="stylesheet" href="https://cdn.datatables.net/2.3.6/css/dataTables.bootstrap5.min.css" />
@@ -69,6 +70,7 @@
                 </div>
                 <div id="error" class="alert alert-danger mx-3 mt-3" style="display: none;" role="alert"></div>
                 <form id="createForm">
+                    @csrf
                     <div class="modal-body">
                         <div>
                             <h6 class="fw-bold">Kode Barang</h6>
@@ -108,6 +110,7 @@
                 </div>
                 <div id="error-edit" class="alert alert-danger mx-3 mt-3" style="display: none;" role="alert"></div>
                 <form id="editForm">
+                    @csrf
                     <div class="modal-body">
                         <div>
                             <h6 class="fw-bold">Kode Barang</h6>
@@ -146,6 +149,11 @@
     <script>
         var barangTable;
         $(document).ready(function() {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
             var error_kode_barang = $('#error-kode-barang');
             var error_nama_barang = $('#error-nama-barang');
             var error_general = $('#error');
@@ -170,7 +178,7 @@
                 searching: true,
                 info: true,
                 ajax: {
-                    url: '/api/barang',
+                    url: "{{route('barang.index')}}",
                     type: 'GET',
                     dataSrc: 'data',
                 },
@@ -210,7 +218,7 @@
                 success.empty();    
                 var formData = $(this).serialize();
                 $.ajax({
-                    url: '/api/barang',
+                    url: "{{ route('barang.store')}}",
                     method: 'POST',
                     data: formData,
                     success: function(response){
@@ -248,7 +256,7 @@
             $('tbody').on('click', '#edit-button', function() {
                 var barangId = $(this).data('id');
                 $.ajax({
-                    url: '/api/barang/' + barangId,
+                    url: "{{ route('barang.show', '') }}/" + barangId,
                     method: 'GET',
                     success: function(response) {
                         $('#edit_id').val(response.data.id);
@@ -271,7 +279,7 @@
                 error_nama_barang_edit.empty();
                 success.empty();
                 $.ajax({
-                    url: '/api/barang/' + id_barang,
+                    url: "{{ route('barang.update', '') }}/" + id_barang,
                     method: 'PUT',
                     data: $(this).serialize(),
                     success: function(response) {
@@ -307,7 +315,7 @@
                 // currentPage = parseInt(currentPage);
                 
                 $.ajax({
-                    url: '/api/barang/' + id_barang,
+                    url: "{{ route('barang.destroy', '') }}/" + id_barang,
                     method: 'delete',
                     success: function(response){
                         // Jika item yang dihapus adalah item terakhir di halaman dan bukan di halaman pertama

@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="{{ asset('css/lokasi/show.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.datatables.net/2.3.6/css/dataTables.bootstrap5.min.css" />
@@ -118,6 +119,8 @@
                 </div>
                 <div id="edit-error-500" class="alert alert-danger mx-3 mt-3" style="display: none;" role="alert"></div>
                 <form id="editForm">
+                    @csrf
+                    <input type="hidden" name="_method" value="PUT">
                     <div class="modal-body">
                         <div>
                             <h6 class="fw-bold mb-3">Kode Lokasi</h6>
@@ -154,6 +157,11 @@
     <script>
         var lokasiTable;
         $(document).ready(function() {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
             function toCommas(value){
                 return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
             }
@@ -177,7 +185,7 @@
                 searching: true,
                 info: true,
                 ajax: {
-                    url: '/api/lokasi',
+                    url: "{{route('lokasi.index')}}",
                     type: 'GET',
                     dataSrc: 'data',
                 },
@@ -196,7 +204,7 @@
                     {
                         data: null,
                         render: function(data, type, row) {
-                            var editButton = '<button class="btn btn-sm btn-warning me-2" data-bs-toggle="modal" data-bs-target="#editLokasiModal" data-edit-id="' + row.id + '">Edit</button>';
+                            var editButton = '<button class="btn btn-sm btn-warning me-2" data-bs-toggle="modal" data-bs-target="#editLokasiModal" data-edit-id="' + row.id + '" id="editButton">Edit</button>';
                             var deleteButton = '';
                             if(row.is_used){
                                 deleteButton = '';
@@ -223,7 +231,7 @@
                 $('#success').empty().hide();
                 var formData = $(this).serialize();
                 $.ajax({
-                    url: '/api/lokasi',
+                    url: "{{ route('lokasi.store')}}",
                     method: 'POST',
                     data: formData,
                     success: function(response) {
@@ -259,7 +267,7 @@
                 var jumlahItem = $('tbody tr').length;
                 if (confirm('Apakah Anda yakin ingin menghapus lokasi ini?')) {
                     $.ajax({
-                        url: '/api/lokasi/' + lokasiId,
+                        url: "{{route('lokasi.destroy', ':id')}}".replace(':id', lokasiId),
                         method: 'DELETE',
                         success: function(response) {
                             if(jumlahItem == 1 && currentPage > 1) {
@@ -283,10 +291,10 @@
                     });
                 }
             });
-            $('tbody').on('click', '.edit-button', function(e) {
+            $('tbody').on('click', '#editButton', function(e) {
                 var lokasiId = $(this).data('edit-id');
                 $.ajax({
-                    url: '/api/lokasi/' + lokasiId,
+                    url: "{{ route('lokasi.show', '') }}/" + lokasiId,
                     method: 'GET',
                     success: function(response) {
                         $('#edit_id_lokasi').val(response.data.id);
@@ -316,7 +324,7 @@
                 $('.text-danger').empty().hide();
                 $('#error-500').empty().hide();
                 $.ajax({
-                    url: '/api/lokasi/' + $id_lokasi,
+                    url: "{{ route('lokasi.update', ':id') }}".replace(':id', $id_lokasi),
                     method: 'PUT',
                     data: $(this).serialize(),
                     success: function(response) {

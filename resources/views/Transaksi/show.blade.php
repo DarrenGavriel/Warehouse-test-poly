@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/transaksi/show.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -149,6 +150,7 @@
                 <div id="error-500" class="alert alert-danger mx-3 mt-3" style="display: none;" role="alert"></div>
                 
                 <form id="createForm">
+                    @csrf
                     <div class="modal-body">
                         <div class="mb-4">
                             <h6 class="fw-bold mb-3">Jenis transaksi</h6>
@@ -260,6 +262,11 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/id.js"></script>
     <script>
         $(document).ready(function() {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
             function formatDate(dateString){
                 var date = new Date(dateString);
                 var formattedDate = date.toLocaleDateString('id-ID', {
@@ -658,7 +665,7 @@
                 var formData = $(this).serialize();
                 // console.log($(this).find('input[name="jenis_transaksi"]:checked').val());
                 $.ajax({
-                    url: '/api/transaksi',
+                    url: "{{ route('create-transaksi') }}",
                     method: 'POST',
                     data: {
                         jenis_transaksi: $(this).find('input[name="jenis_transaksi"]:checked').val(),
