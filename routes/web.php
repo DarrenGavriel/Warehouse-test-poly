@@ -15,7 +15,7 @@ Route::get('/', function () {
     return view('Stok.show_dt');
 });
 Route::get('/stok/laporan', function () {
-    return view('Stok.show_dt');
+    return view('Stok.show_dt_eager');
 });
 Route::get('/transaksi/laporan', function () {
     return view('Transaksi.show');
@@ -28,4 +28,21 @@ Route::get('/barang/master', function () {
 });
 Route::get('/test', function () {
     return view('test');
+});
+Route::post('/transaksi/insert', 'RiwayatTransaksiController@insert')->name('create-transaksi');
+
+Route::prefix('lokasi')->name('lokasi.')->group(function () {
+    Route::get('/', 'LokasiController@getAll')->name('index');
+    Route::post('/', 'LokasiController@createLokasi')->name('store');
+    Route::delete('/{id}', 'LokasiController@deleteLokasi')->name('destroy');
+    Route::put('/{id}', 'LokasiController@updateLokasi')->name('update');
+    Route::get('/{id}', 'LokasiController@getLokasiById')->name('show');
+});
+
+Route::prefix('barang')->name('barang.')->group(function () {
+    Route::get('/', 'BarangController@getAll')->name('index');
+    Route::post('/', 'BarangController@insert')->name('store');
+    Route::delete('/{id}', 'BarangController@deleteBarang')->name('destroy');
+    Route::put('/{id}', 'BarangController@updateBarang')->name('update');
+    Route::get('/{id}', 'BarangController@getById')->name('show');
 });
