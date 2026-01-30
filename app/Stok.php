@@ -12,7 +12,7 @@ class Stok extends Model
     public $timestamps = true;
     public function barang()
     {
-        return $this->belongsTo(Stok::class, 'id_barang', 'id');
+        return $this->belongsTo(Barang::class, 'id_barang', 'id');
     }
     public function lokasi()
     {
