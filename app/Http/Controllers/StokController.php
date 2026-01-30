@@ -85,4 +85,19 @@ class StokController extends Controller
             ], 500);
         }
     }
+    public function getStokEager(){
+        try {
+            $data = $this->model->with(['lokasi', 'barang'])->get();
+            return response()->json([
+                'success' => true,
+                'message' => "Berhasil mengambil stok dengan eager",
+                "data" => $data,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => true,
+                'message' => "Gagal mengambil stok dengan eager",
+            ], 500);
+        }
+    }
 }
